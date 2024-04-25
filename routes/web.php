@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\RsvpController;
+use App\Http\Controllers\CommentController;
 
 // test page
 Route::get('/test', [ProfileController::class, 'index'])->name('index');
@@ -35,11 +36,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/edit/{id}', [EventController::class, 'editRequest'])->name('event.edit.post');
 
     // delete event
-    Route::post('/delete/{id}', [EventController::class, 'delete'])->name('event.delete');
+    Route::post('/delete/{id}', [EventController::class, 'delete'])->name('event.delete.post');
 
-    // rsvp
-    Route::post('/{id}', [RsvpController::class, 'rsvpRequest'])->name('rsvp.post');
+    // comment
+    Route::post('/{id}', [CommentController::class, 'commentDeleteRequest'])->name('comment.delete.post');
+    Route::post('/{id}', [CommentController::class, 'commentEditRequest'])->name('comment.edit.post');
 });
+
+Route::post('/{id}', [CommentController::class, 'commentRequest'])->name('comment.post');
+
+// rsvp
+Route::post('/{id}', [RsvpController::class, 'rsvpRequest'])->name('rsvp.post');
 
 // event
 Route::get('/{id}', [EventController::class, 'event'])->name('event');

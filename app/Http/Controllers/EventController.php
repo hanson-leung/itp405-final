@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Status;
 use App\Models\Rsvp;
+use App\Models\Comment;
 use Auth;
 
 class EventController extends Controller
@@ -32,6 +33,7 @@ class EventController extends Controller
                 'rsvpOptions' => Status::all(),
                 'userRsvp' => Rsvp::where('event_id', $id)->where('user_id', Auth::id())->first(),
                 'attendees' => Rsvp::with(['status'])->where('event_id', $id)->get(),
+                'comments' => Comment::all(),
             ]
         );
     }

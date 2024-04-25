@@ -26,6 +26,7 @@
         @endif
     @endif
 
+    {{-- if owner: edit event, else rsvp --}}
     @if (Auth::check() && Auth::user()->id === $event->user_id)
         <a href="{{ route('event.edit', ['id' => $event->id]) }}" class="btn btn-primary">Edit</a>
     @else
@@ -44,4 +45,44 @@
             <input type="submit" value="Submit" class="btn btn-primary">
         </form>
     @endif
+
+    {{-- if comments, show comments --}}
+    @if ($comments)
+        <h2 class="mt-5">Comments</h2>
+        <ul class="list-group">
+            @foreach ($comments as $comment)
+                <li class="list-group
+                -item">
+                    <p>{{ $comment->user->name }}</p>
+                    <p>{{ $comment->comment }}</p>
+                    <p>{{ $comment }}</p>
+                </li>
+                @if ($comment->user->id === Auth::user()->id)
+                    <form method="post" action="{{ route('comment.delete.post', ['id' => $comment->id]) }}">
+                        @csrf
+                        <input type="submit" value="Delete" class="btn btn-danger">
+                    </form>
+                    <form method="post" action="{{ route('comment.edit.post', ['id' => $comment->id]) }}">
+                        @csrf
+                        <input type="submit" value="Edit" class="btn btn-primary">
+                    </form>
+                @endif
+            @endforeach
+        </ul>
+    @endif
+
+
+    {{-- if logged in and rsvped, leave and comment --}}
+    @if (Auth::check() && $userRsvp)
+        <form method="post" action="{{ route('comment.post', ['id' => $event->id]) }}">
+            @csrf
+            <div class="mb-3">
+                <label class="form-label" for="comment">Comment</label>
+                <textarea id="comment" name="comment" class="form-control"></textarea>
+            </div>
+            <input type="hidden" name="event_id" value="{{ $event->id }}">
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+    @endif
+
 @endsection
