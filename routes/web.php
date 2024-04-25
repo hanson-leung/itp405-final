@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\RsvpController;
 
 // test page
 Route::get('/test', [ProfileController::class, 'index'])->name('index');
@@ -35,6 +36,9 @@ Route::middleware(['auth'])->group(function () {
 
     // delete event
     Route::post('/delete/{id}', [EventController::class, 'delete'])->name('event.delete');
+
+    // rsvp
+    Route::post('/{id}', [RsvpController::class, 'rsvpRequest'])->name('rsvp.post');
 });
 
 // event

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,18 +12,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('participants', function (Blueprint $table) {
+        Schema::dropIfExists('statuses');
+
+        Schema::create('statuses', function (Blueprint $table) {
             $table->id();
+            $table->string('status');
             $table->timestamps();
-
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
-
-            $table->integer('event_id')->unsigned();
-            $table->foreign('event_id')->references('id')->on('events');
-
-            $table->integer('status');
         });
+
+
+        DB::table('statuses')->insert([
+            ['status' => 'Yes'],
+            ['status' => 'No'],
+            ['status' => 'Maybe'],
+        ]);
     }
 
     /**
@@ -30,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('participants');
+        Schema::dropIfExists('statuses');
     }
 };

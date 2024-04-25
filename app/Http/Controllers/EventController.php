@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use App\Models\Status;
+use App\Models\Rsvp;
 use Auth;
 
 class EventController extends Controller
@@ -15,6 +17,7 @@ class EventController extends Controller
             'events.events',
             [
                 'events' => Event::where('user_id', Auth::id())->get(),
+                'rsvps' => Rsvp::with(['event'])->where('user_id', Auth::id())->get(),
             ]
         );
     }
@@ -26,6 +29,8 @@ class EventController extends Controller
             'events.event',
             [
                 'event' => Event::find($id),
+                'status' => Status::all(),
+                'rsvp' => Rsvp::where('event_id', $id)->where('user_id', Auth::id())->first(),
             ]
         );
     }
