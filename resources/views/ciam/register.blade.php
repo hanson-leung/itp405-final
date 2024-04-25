@@ -3,9 +3,9 @@
 @section('title', 'Register')
 
 @section('main')
-    <h1>Register</h1>
+    <h1 class="mb-5">Register</h1>
 
-    <form method="post" action="{{ route('registration.register') }}">
+    <form method="post" action="{{ route('register.post') }}">
         @csrf
         <div class="mb-3">
             <label class="form-label" for="name">Full name</label>
