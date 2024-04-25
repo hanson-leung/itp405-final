@@ -33,6 +33,7 @@ class EventController extends Controller
                 'rsvpOptions' => Status::all(),
                 'userRsvp' => Rsvp::where('event_id', $id)->where('user_id', Auth::id())->first(),
                 'attendees' => Rsvp::with(['status'])->where('event_id', $id)->get(),
+                'attendeesCount' => Rsvp::where('event_id', $id)->whereIn('status_id', [1, 3])->count(),
                 'comments' => Comment::all(),
             ]
         );

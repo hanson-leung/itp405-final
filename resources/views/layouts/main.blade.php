@@ -16,7 +16,13 @@
             @if (Auth::check())
                 {{-- if logged in, show profile and logout links --}}
                 <li class="nav-item">
-                    <a href="{{ route('index') }}" class="nav-link">Profile</a>
+                    <a href="{{ route('events', [
+                        'username' => Auth::user()->name,
+                    ]) }}"
+                        class="nav-link">Party Central</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('settings') }}" class="nav-link">Settings</a>
                 </li>
                 <li class="nav-item">
                     <form method="post" action="{{ route('logout.post') }}">

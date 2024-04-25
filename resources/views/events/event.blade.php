@@ -3,27 +3,38 @@
 @section('title', 'Event')
 
 @section('main')
+    {{-- event title --}}
     <h1 class="mb-5">{{ $event->title }}</h1>
 
+    {{-- event host --}}
+    <p>Hosted by {{ $event->user->name }}</p>
+
+    {{-- event description --}}
     <p>{{ $event->description }}</p>
+
+    {{-- event start --}}
     <p>{{ $event->start }}</p>
 
+    {{-- event end --}}
     @if ($event->end)
         <p>{{ $event->end }}</p>
     @endif
 
+    {{-- event location --}}
     @if ($event->location)
         <p>{{ $event->location }}</p>
     @endif
 
+    {{-- attendee list --}}
     @if ($attendees)
-        <h2>Attendees</h2>
         @foreach ($attendees->take(3) as $attendee)
             <p>{{ $attendee->user->name }}</p>
         @endforeach
-        @if ($attendees->count() > 3)
-            <p>and {{ $attendees->count() - 3 }} more.</p>
+        @if ($attendeesCount > 3)
+            and {{ $attendeesCount - 3 }} more
         @endif
+        {{ $attendeesCount > 1 ? 'are' : 'is' }} going.
+        </p>
     @endif
 
     {{-- if owner: edit event, else rsvp --}}
@@ -57,7 +68,7 @@
                     <p>{{ $comment->comment }}</p>
                     <p>{{ $comment }}</p>
                 </li>
-                @if ($comment->user->id === Auth::user()->id)
+                {{-- @if ($comment->user->id === Auth::user()->id)
                     <form method="post" action="{{ route('comment.delete.post', ['id' => $comment->id]) }}">
                         @csrf
                         <input type="submit" value="Delete" class="btn btn-danger">
@@ -66,7 +77,7 @@
                         @csrf
                         <input type="submit" value="Edit" class="btn btn-primary">
                     </form>
-                @endif
+                @endif --}}
             @endforeach
         </ul>
     @endif
@@ -74,7 +85,8 @@
 
     {{-- if logged in and rsvped, leave and comment --}}
     @if (Auth::check() && $userRsvp)
-        <form method="post" action="{{ route('comment.post', ['id' => $event->id]) }}">
+        <p>User is logged in and has RSVPed</p>
+        {{-- <form method="post" action="{{ route('comment.post', ['id' => $event->id]) }}">
             @csrf
             <div class="mb-3">
                 <label class="form-label" for="comment">Comment</label>
@@ -82,7 +94,7 @@
             </div>
             <input type="hidden" name="event_id" value="{{ $event->id }}">
             <input type="submit" value="Submit" class="btn btn-primary">
-        </form>
+        </form> --}}
     @endif
 
 @endsection

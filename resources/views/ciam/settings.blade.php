@@ -3,14 +3,15 @@
 @section('title', 'Test Page')
 
 @section('main')
-    <h1 class="mb-3">Hello World</h1>
+    <h1 class="mb-3">Hi {{ $user->name }}</h1>
 
-    {{-- 
+
     @if (Auth::check())
-        <p>Name: {{ $user->name }}</p>
         <p>Email: {{ $user->email }}</p>
     @else
         <p>You are not logged in.</p>
-    @endif --}}
+    @endif
+
+    {{-- <a href="{{ route('profile.edit', $user->id) }}" class="btn btn-primary">Edit Profile</a> --}}
 
 @endsection
