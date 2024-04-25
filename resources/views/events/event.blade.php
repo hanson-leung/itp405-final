@@ -16,6 +16,16 @@
         <p>{{ $event->location }}</p>
     @endif
 
+    @if ($attendees)
+        <h2>Attendees</h2>
+        @foreach ($attendees->take(3) as $attendee)
+            <p>{{ $attendee->user->name }}</p>
+        @endforeach
+        @if ($attendees->count() > 3)
+            <p>and {{ $attendees->count() - 3 }} more.</p>
+        @endif
+    @endif
+
     @if (Auth::check() && Auth::user()->id === $event->user_id)
         <a href="{{ route('event.edit', ['id' => $event->id]) }}" class="btn btn-primary">Edit</a>
     @else
@@ -24,9 +34,9 @@
             <div class="mb-3">
                 <label class="form-label" for="status">Will you be there?</label>
                 <select id="status" name="status" class="form-control">
-                    @foreach ($status as $status)
-                        <option value="{{ $status->id }}" @if ($rsvp && $rsvp->status_id == $status->id) selected @endif>
-                            {{ $status->status }}</option>
+                    @foreach ($rsvpOptions as $rsvpOption)
+                        <option value="{{ $rsvpOption->id }}" @if ($userRsvp && $userRsvp->status_id == $rsvpOption->id) selected @endif>
+                            {{ $rsvpOption->status }}</option>
                     @endforeach
                 </select>
             </div>

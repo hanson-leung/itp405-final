@@ -17,7 +17,7 @@ class EventController extends Controller
             'events.events',
             [
                 'events' => Event::where('user_id', Auth::id())->get(),
-                'rsvps' => Rsvp::with(['event'])->where('user_id', Auth::id())->get(),
+                'rsvps' => Rsvp::with(['event'])->where('user_id', Auth::id())->whereIn('status_id', [1, 3])->get(),
             ]
         );
     }
@@ -29,8 +29,9 @@ class EventController extends Controller
             'events.event',
             [
                 'event' => Event::find($id),
-                'status' => Status::all(),
-                'rsvp' => Rsvp::where('event_id', $id)->where('user_id', Auth::id())->first(),
+                'rsvpOptions' => Status::all(),
+                'userRsvp' => Rsvp::where('event_id', $id)->where('user_id', Auth::id())->first(),
+                'attendees' => Rsvp::with(['status'])->where('event_id', $id)->get(),
             ]
         );
     }
