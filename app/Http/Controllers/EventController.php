@@ -18,6 +18,7 @@ class EventController extends Controller
         return view(
             'events.events',
             [
+                'username' => $username,
                 'isAuth' => Auth::check() && Auth::user()->name === $username,
                 'events' => Event::with(['user'])->where('user_id', $user_id)->orderBy('start', 'desc')->get(),
                 'rsvps' => User::with(['rsvp'])->find($user_id)->rsvp->sortByDesc('start'),
@@ -66,6 +67,10 @@ class EventController extends Controller
     // edit event
     public function edit($event_id)
     {
+        if (Auth::user()->cannot('edit', Event::find($event_id))) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view(
             'events.event_edit',
             [
@@ -76,6 +81,10 @@ class EventController extends Controller
 
     public function editRequest(Request $request, $event_id)
     {
+        if (Auth::user()->cannot('edit', Event::find($event_id))) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $event = Event::find($event_id);
         $event->title = $request->input('title');
         $event->description = $request->input('description');
@@ -90,6 +99,10 @@ class EventController extends Controller
     // delete event
     public function delete($event_id)
     {
+        if (Auth::user()->cannot('delete', Event::find($event_id))) {
+            abort(403, 'Unauthorized action.');
+        }
+
         Event::destroy($event_id);
         return redirect()->route('index', ['username' => Auth::user()->name]);
     }

@@ -4,7 +4,7 @@
 
 @section('main')
     <h1 class="mb-3">
-        {{ $isAuth ? 'Your' : Auth::user()->name . "'s" }}
+        {{ $isAuth ? 'Your' : $username . "'s" }}
         Events</h1>
 
     <ul class="list-group">
