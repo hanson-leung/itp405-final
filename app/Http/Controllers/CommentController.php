@@ -16,23 +16,25 @@ class CommentController extends Controller
         $comment->comment = $request->input('comment');
         $comment->save();
 
-        return redirect()->route('event', ['id' => $request->input('event_id')]);
+        return redirect()->route('event', ['event_id' => $request->input('event_id')]);
     }
 
-    public function commentDeleteRequest($id)
-    {
-        $comment = Comment::find($id);
+    public function commentDeleteRequest(
+        $event_id,
+        $comment_id
+    ) {
+        $comment = Comment::find($comment_id);
         $comment->delete();
 
-        return redirect()->route('event', ['id' => $comment->event_id]);
+        return redirect()->route('event', ['event_id' => $event_id]);
     }
 
     public function commentEditRequest(Request $request)
     {
-        $comment = Comment::find($request->input('id'));
+        $comment = Comment::find($request->input('event_id'));
         $comment->comment = $request->input('comment');
         $comment->save();
 
-        return redirect()->route('event', ['id' => $comment->event_id]);
+        return redirect()->route('event', ['event_id' => $comment->event_id]);
     }
 }

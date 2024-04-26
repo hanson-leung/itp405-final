@@ -18,13 +18,18 @@ class AuthController extends Controller
     // login
     public function login()
     {
-        return view('ciam.login');
+        return view(
+            'ciam.login',
+            [
+                'event_id' => request('event_id'),
+                'status_id' => request('status_id'),
+            ]
+        );
     }
 
 
-
     // login request
-    public function loginRequest(Request $request)
+    public function loginRequest(Request $request, $event_id = null, $status_id = null)
     {
         $wasLoginSuccessful = Auth::attempt([
             'email' => $request->input('email'),
@@ -32,7 +37,11 @@ class AuthController extends Controller
         ]);
 
         if ($wasLoginSuccessful) {
-            return redirect()->route('index', ['username' => Auth::user()->name]);
+            if ($event_id && $status_id) {
+                return redirect()->route('event', ['event_id' => $event_id, 'status_id' => $status_id])->withInput();
+            } else {
+                return redirect()->route('index', ['username' => Auth::user()->name]);
+            }
         } else {
             return redirect()->route('login')->with('error', 'Invalid email or password');
         }

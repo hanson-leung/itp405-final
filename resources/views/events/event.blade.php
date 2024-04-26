@@ -33,21 +33,27 @@
         @if ($attendeesCount > 3)
             and {{ $attendeesCount - 3 }} more
         @endif
-        {{ $attendeesCount > 1 ? 'are' : 'is' }} going.
-        </p>
+
+        @if ($attendeesCount > 0)
+            <p>
+                {{ $attendeesCount > 1 ? 'are' : 'is' }} going.
+            </p>
+        @endif
     @endif
+
+    <hr>
 
     {{-- if owner: edit event, else rsvp --}}
     @if (Auth::check() && Auth::user()->id === $event->user_id)
         <a href="{{ route('event.edit', ['event_id' => $event->id]) }}" class="btn btn-primary">Edit</a>
     @else
         <form method="post" action="
-        {{ route('rsvp.post', ['event_id' => $event->id]) }}
+        {{ route('rsvp.post') }}
         ">
             @csrf
             <div class="mb-3">
-                <label class="form-label" for="status">Will you be there?</label>
-                <select id="status" name="status" class="form-control">
+                <label class="form-label" for="status_id">Will you be there?</label>
+                <select id="status_id" name="status_id" class="form-control">
                     @foreach ($rsvpOptions as $rsvpOption)
                         <option value="{{ $rsvpOption->id }}" @if ($userRsvp && $userRsvp->status_id == $rsvpOption->id) selected @endif>
                             {{ $rsvpOption->status }}</option>
@@ -59,44 +65,51 @@
         </form>
     @endif
 
+    <hr>
+
+    {{-- if logged in and rsvped or the event owner, leave and comment --}}
+    @if (Auth::check())
+        @if ($userRsvp || Auth::user()->id === $event->user_id)
+            <form method="post" action="{{ route('comment.post', ['event_id' => $event->id]) }}">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label" for="comment">Comment</label>
+                    <textarea id="comment" name="comment" class="form-control"></textarea>
+                </div>
+                <input type="hidden" name="event_id" value="{{ $event->id }}">
+                <input type="submit" value="Submit" class="btn btn-primary">
+            </form>
+        @else
+            <p>You must RSVP to leave a comment.</p>
+        @endif
+    @else
+        <p><a href="{{ route('login', ['event_id' => $event->id]) }}">Login</a> to leave a comment.</p>
+    @endif
+
     {{-- if comments, show comments --}}
     @if ($comments)
-        <h2 class="mt-5">Comments</h2>
         <ul class="list-group">
             @foreach ($comments as $comment)
+                <hr>
                 <li class="list-group
                 -item">
                     <p>{{ $comment->user->name }}</p>
                     <p>{{ $comment->comment }}</p>
-                    <p>{{ $comment }}</p>
+                    <p>{{ $comment->created_at }}</p>
                 </li>
-                {{-- @if ($comment->user->id === Auth::user()->id)
-                    <form method="post" action="{{ route('comment.delete.post', ['id' => $comment->id]) }}">
+                @if ($comment->user->id === Auth::user()->id)
+                    <form method="post"
+                        action="{{ route('comment.delete.post', ['event_id' => $event->id, 'comment_id' => $comment->id]) }}">
                         @csrf
                         <input type="submit" value="Delete" class="btn btn-danger">
                     </form>
-                    <form method="post" action="{{ route('comment.edit.post', ['id' => $comment->id]) }}">
+                    <form method="post"
+                        action="{{ route('comment.edit.post', ['event_id' => $event->id, 'comment_id' => $comment->id]) }}">
                         @csrf
                         <input type="submit" value="Edit" class="btn btn-primary">
                     </form>
-                @endif --}}
+                @endif
             @endforeach
         </ul>
     @endif
-
-
-    {{-- if logged in and rsvped, leave and comment --}}
-    @if (Auth::check() && $userRsvp)
-        <p>User is logged in and has RSVPed</p>
-        {{-- <form method="post" action="{{ route('comment.post', ['id' => $event->id]) }}">
-            @csrf
-            <div class="mb-3">
-                <label class="form-label" for="comment">Comment</label>
-                <textarea id="comment" name="comment" class="form-control"></textarea>
-            </div>
-            <input type="hidden" name="event_id" value="{{ $event->id }}">
-            <input type="submit" value="Submit" class="btn btn-primary">
-        </form> --}}
-    @endif
-
 @endsection

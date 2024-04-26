@@ -5,7 +5,8 @@
 @section('main')
     <h1>Login</h1>
 
-    <form method="post" action="{{ route('login.post') }}">
+    <form method="post"
+        action="{{ route('login.post', ['event_id' => $event_id ?? null, 'status_id' => $status_id ?? null]) }}">
         @csrf
         <div class="mb-3">
             <label class="form-label" for="email">Email</label>
