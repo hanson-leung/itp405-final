@@ -9,9 +9,9 @@ use App\Http\Controllers\RsvpController;
 use App\Http\Controllers\CommentController;
 
 // test page
-Route::get('/', function () {
-    return view('test');
-});
+// Route::get('/', function () {
+//     return view('test');
+// });
 
 // registration
 Route::get('/register', [RegistrationController::class, 'register'])->name('register');
@@ -22,35 +22,35 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginRequest'])->name('login.post');
 
 // rsvp
-Route::post('/{id}', [RsvpController::class, 'rsvpRequest'])->name('rsvp.post');
+Route::post('/rsvp/!{event_id}', [RsvpController::class, 'rsvpRequest'])->name('rsvp.post');
 
 // event
-Route::get('/{id}', [EventController::class, 'event'])->name('event');
+Route::get('/!{event_id}', [EventController::class, 'event'])->name('event');
 
 // account
 Route::get('/settings', [SettingsController::class, 'settings'])->name('settings');
+
+// events
+Route::get('/@{username}', [EventController::class, 'events'])->name('index');
 
 // auth middleware
 Route::middleware(['auth'])->group(function () {
     // logout
     Route::post('/logout', [AuthController::class, 'logoutRequest'])->name('logout.post');
 
-    // events
-    Route::get('/@{username}', [EventController::class, 'events'])->name('events');
-
     // create event
     Route::get('/create', [EventController::class, 'create'])->name('event.create');
     Route::post('/create', [EventController::class, 'createRequest'])->name('event.create.post');
 
     // edit event
-    Route::get('/edit/{id}', [EventController::class, 'edit'])->name('event.edit');
-    Route::post('/edit/{id}', [EventController::class, 'editRequest'])->name('event.edit.post');
+    Route::get('/!{event_id}/edit', [EventController::class, 'edit'])->name('event.edit');
+    Route::post('!{event_id}/edit', [EventController::class, 'editRequest'])->name('event.edit.post');
 
     // delete event
-    Route::post('/delete/{id}', [EventController::class, 'delete'])->name('event.delete.post');
+    Route::post('/{event_id}/delete', [EventController::class, 'delete'])->name('event.delete.post');
 
     // comment
-    Route::post('/{id}', [CommentController::class, 'commentRequest'])->name('comment.post');
-    Route::post('/{id}', [CommentController::class, 'commentDeleteRequest'])->name('comment.delete.post');
-    Route::post('/{id}', [CommentController::class, 'commentEditRequest'])->name('comment.edit.post');
+    Route::post('/!{event_id}', [CommentController::class, 'commentRequest'])->name('comment.post');
+    Route::post('/!{event_id}', [CommentController::class, 'commentDeleteRequest'])->name('comment.delete.post');
+    Route::post('/!{event_id}', [CommentController::class, 'commentEditRequest'])->name('comment.edit.post');
 });

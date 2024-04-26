@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Rsvp;
 
+use Auth;
+
 class RsvpController extends Controller
 {
     public function rsvpRequest(Request $request)
@@ -23,6 +25,6 @@ class RsvpController extends Controller
         $rsvp->save();
 
 
-        return redirect()->route('index');
+        return redirect()->route('index', ['username' => Auth::user()->name]);
     }
 }

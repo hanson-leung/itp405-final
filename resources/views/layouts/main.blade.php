@@ -16,7 +16,7 @@
             @if (Auth::check())
                 {{-- if logged in, show profile and logout links --}}
                 <li class="nav-item">
-                    <a href="{{ route('events', [
+                    <a href="{{ route('index', [
                         'username' => Auth::user()->name,
                     ]) }}"
                         class="nav-link">Party Central</a>

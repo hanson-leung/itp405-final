@@ -32,7 +32,7 @@ class AuthController extends Controller
         ]);
 
         if ($wasLoginSuccessful) {
-            return redirect()->route('index');
+            return redirect()->route('index', ['username' => Auth::user()->name]);
         } else {
             return redirect()->route('login')->with('error', 'Invalid email or password');
         }

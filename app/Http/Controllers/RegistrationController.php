@@ -26,6 +26,9 @@ class RegistrationController extends Controller
         $user->save();
         Auth::login($user);
 
-        return redirect()->route('index');
+        return redirect()->route(
+            'index',
+            ['username' => Auth::user()->name]
+        );
     }
 }

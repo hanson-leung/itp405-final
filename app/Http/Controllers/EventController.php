@@ -7,33 +7,35 @@ use App\Models\Event;
 use App\Models\Status;
 use App\Models\Rsvp;
 use App\Models\Comment;
+use App\Models\User;
 use Auth;
 
 class EventController extends Controller
 {
-    // events
-    public function events()
+    public function events($username)
     {
+        $user_id = User::where('name', $username)->first()->id;
         return view(
             'events.events',
             [
-                'events' => Event::where('user_id', Auth::id())->get(),
-                'rsvps' => Rsvp::with(['event'])->where('user_id', Auth::id())->whereIn('status_id', [1, 3])->get(),
+                'isAuth' => Auth::check() && Auth::user()->name === $username,
+                'events' => Event::with(['user'])->where('user_id', $user_id)->get(),
+                'rsvps' => Rsvp::with(['event'])->where('user_id', $user_id)->whereIn('status_id', [1, 2, 3])->get(),
             ]
         );
     }
 
     // event
-    public function event($id)
+    public function event($event_id)
     {
         return view(
             'events.event',
             [
-                'event' => Event::find($id),
+                'event' => Event::find($event_id),
                 'rsvpOptions' => Status::all(),
-                'userRsvp' => Rsvp::where('event_id', $id)->where('user_id', Auth::id())->first(),
-                'attendees' => Rsvp::with(['status'])->where('event_id', $id)->get(),
-                'attendeesCount' => Rsvp::where('event_id', $id)->whereIn('status_id', [1, 3])->count(),
+                'userRsvp' => Rsvp::where('event_id', $event_id)->where('user_id', Auth::id())->first(),
+                'attendees' => Rsvp::with(['status'])->where('event_id', $event_id)->get(),
+                'attendeesCount' => Rsvp::where('event_id', $event_id)->whereIn('status_id', [1, 3])->count(),
                 'comments' => Comment::all(),
             ]
         );
@@ -58,23 +60,23 @@ class EventController extends Controller
         $event->user_id = Auth::id();
         $event->save();
 
-        return redirect()->route('events');
+        return redirect()->route('index', ['username' => Auth::user()->name]);
     }
 
     // edit event
-    public function edit($id)
+    public function edit($event_id)
     {
         return view(
             'events.event_edit',
             [
-                'event' => Event::find($id),
+                'event' => Event::find($event_id),
             ]
         );
     }
 
-    public function editRequest(Request $request, $id)
+    public function editRequest(Request $request, $event_id)
     {
-        $event = Event::find($id);
+        $event = Event::find($event_id);
         $event->title = $request->input('title');
         $event->description = $request->input('description');
         $event->start = $request->input('start');
@@ -82,13 +84,13 @@ class EventController extends Controller
         $event->location = $request->input('location');
         $event->save();
 
-        return redirect()->route('events');
+        return redirect()->route('index', ['username' => Auth::user()->name]);
     }
 
     // delete event
-    public function delete($id)
+    public function delete($event_id)
     {
-        Event::destroy($id);
-        return redirect()->route('events');
+        Event::destroy($event_id);
+        return redirect()->route('index', ['username' => Auth::user()->name]);
     }
 }

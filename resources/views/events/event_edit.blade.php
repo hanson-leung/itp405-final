@@ -5,7 +5,7 @@
 @section('main')
     <h1 class="mb-5">Edit</h1>
 
-    <form method="post" action="{{ route('event.edit.post', ['id' => $event->id]) }}">
+    <form method="post" action="{{ route('event.edit.post', ['event_id' => $event->id]) }}">
         @csrf
         <div class="mb-3">
             <label class="form-label" for="title">Title</label>

@@ -39,9 +39,11 @@
 
     {{-- if owner: edit event, else rsvp --}}
     @if (Auth::check() && Auth::user()->id === $event->user_id)
-        <a href="{{ route('event.edit', ['id' => $event->id]) }}" class="btn btn-primary">Edit</a>
+        <a href="{{ route('event.edit', ['event_id' => $event->id]) }}" class="btn btn-primary">Edit</a>
     @else
-        <form method="post" action="{{ route('rsvp.post', ['id' => $event->id]) }}">
+        <form method="post" action="
+        {{ route('rsvp.post', ['event_id' => $event->id]) }}
+        ">
             @csrf
             <div class="mb-3">
                 <label class="form-label" for="status">Will you be there?</label>
