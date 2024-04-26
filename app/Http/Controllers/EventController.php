@@ -15,12 +15,12 @@ class EventController extends Controller
     // events
     public function events($username)
     {
-        $user_id = User::where('name', $username)->first()->id;
+        $user_id = User::where('username', $username)->first()->id;
         return view(
             'events.events',
             [
-                'username' => $username,
-                'isAuth' => Auth::check() && Auth::user()->name === $username,
+                'username' => User::where('id', $user_id)->first()->name,
+                'isAuth' => Auth::check() && Auth::user()->id === $user_id,
                 'events' => Event::with(['user'])->where('user_id', $user_id)->orderBy('start', 'desc')->get(),
                 'rsvps' => Rsvp::with(['user'])->whereIn('status_id', [1, 3])->where('user_id', $user_id)->get()->sortByDesc('start'),
             ]
@@ -128,7 +128,7 @@ class EventController extends Controller
         $event->location = $request->input('location');
         $event->save();
 
-        return redirect()->route('index', ['username' => Auth::user()->name]);
+        return redirect()->route('event', [Event::find($event_id)]);
     }
 
     // delete event
@@ -139,6 +139,6 @@ class EventController extends Controller
         }
 
         Event::destroy($event_id);
-        return redirect()->route('index', ['username' => Auth::user()->name]);
+        return redirect()->route('index', ['username' => Auth::user()->username]);
     }
 }

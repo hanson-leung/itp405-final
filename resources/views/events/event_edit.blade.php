@@ -15,8 +15,7 @@
         <div class="mb-3">
             <label class="form-label
             " for="description">Description</label>
-            <textarea id="description" name="description" class="form-control"
-                value="{{ old('description') ?? ($event->description ?? '') }}"></textarea>
+            <textarea id="description" name="description" class="form-control">{{ old('description') ?? ($event->description ?? '') }}</textarea>
         </div>
         <div class="mb-3">
             <label class="form-label
@@ -36,6 +35,6 @@
             <input type="text" id="location" name="location" class="form-control"
                 value="{{ old('location') ?? ($event->location ?? '') }}">
         </div>
-        <input type="submit" value="Edit" class="btn btn-primary">
+        <input type="submit" value="Save" class="btn btn-primary">
     </form>
 @endsection

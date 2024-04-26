@@ -70,7 +70,7 @@
     {{-- if logged in and rsvped or the event owner, leave and comment --}}
     @if (Auth::check())
         @if ($userRsvp || Auth::user()->id === $event->user_id)
-            <form method="post" action="{{ route('comment.post', ['event_id' => $event->id]) }}">
+            <form method="post" action="{{ route('comment.post') }}">
                 @csrf
                 <div class="mb-3">
                     <label class="form-label" for="comment">Comment</label>
@@ -91,20 +91,19 @@
         <ul class="list-group">
             @foreach ($comments as $comment)
                 <hr>
-                <li class="list-group
-                -item">
+                <li class="list-group-item">
                     <p>{{ $comment->user->name }}</p>
                     <p>{{ $comment->comment }}</p>
                     <p>{{ $comment->created_at }}</p>
                 </li>
                 @if (Auth::user() && $comment->user->id === Auth::user()->id)
-                    <form method="post"
-                        action="{{ route('comment.delete.post', ['event_id' => $event->id, 'comment_id' => $comment->id]) }}">
+                    <form method="post" action="{{ route('comment.delete.post') }}">
                         @csrf
+                        <input type="hidden" name="comment_id" value="{{ $comment->id }}">
                         <input type="submit" value="Delete" class="btn btn-danger">
                     </form>
-                    <form method="post"
-                        action="{{ route('comment.edit.post', ['event_id' => $event->id, 'comment_id' => $comment->id]) }}">
+                    <form
+                        action="{{ route('comment.edit', ['comment_id' => $comment->id]) }}">
                         @csrf
                         <input type="submit" value="Edit" class="btn btn-primary">
                     </form>

@@ -7,5 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Status extends Model
 {
-    use HasFactory;
+
+    public function rsvp()
+    {
+        return $this->hasMany(Rsvp::class);
+    }
 }

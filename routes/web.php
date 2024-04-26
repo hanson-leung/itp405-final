@@ -46,14 +46,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logoutRequest'])->name('logout.post');
 
     // edit event
-    Route::get('/edit/{event_id}', [EventController::class, 'edit'])->name('event.edit');
-    Route::post('/edit/{event_id}', [EventController::class, 'editRequest'])->name('event.edit.post');
+    Route::get('/edit', [EventController::class, 'edit'])->name('event.edit');
+    Route::post('/edit', [EventController::class, 'editRequest'])->name('event.edit.post');
 
     // delete event
-    Route::post('/delete/{event_id}', [EventController::class, 'delete'])->name('event.delete.post');
+    Route::post('/delete', [EventController::class, 'delete'])->name('event.delete.post');
 
     // comment
-    Route::post('/add/comment/{event_id}', [CommentController::class, 'commentRequest'])->name('comment.post');
-    Route::post('/delete/comment/{event_id}/{comment_id}', [CommentController::class, 'commentDeleteRequest'])->name('comment.delete.post');
-    Route::post('/edit/comment/{event_id}/{comment_id}', [CommentController::class, 'commentEditRequest'])->name('comment.edit.post');
+    Route::post('/add/comment', [CommentController::class, 'commentRequest'])->name('comment.post');
+    Route::post('/delete/comment', [CommentController::class, 'commentDeleteRequest'])->name('comment.delete.post');
+    Route::get('/edit/comment/{comment_id}', [CommentController::class, 'commentEdit'])->name('comment.edit');
+    Route::post('/edit/comment/{comment_id}', [CommentController::class, 'commentEditRequest'])->name('comment.edit.post');
 });

@@ -17,7 +17,7 @@
                 {{-- if logged in, show profile and logout links --}}
                 <li class="nav-item">
                     <a href="{{ route('index', [
-                        'username' => Auth::user()->name,
+                        'username' => Auth::user()->username,
                     ]) }}"
                         class="nav-link">Party Central</a>
                 </li>

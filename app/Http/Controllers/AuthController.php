@@ -42,7 +42,7 @@ class AuthController extends Controller
                     return redirect()->route('event.create.handle');
                 }
             }
-            return redirect()->route('index', ['username' => Auth::user()->name]);
+            return redirect()->route('index', ['username' => Auth::user()->username]);
         } else {
             return redirect()->route('login')->with('error', 'Invalid email or password');
         }

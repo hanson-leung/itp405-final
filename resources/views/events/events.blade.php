@@ -4,7 +4,7 @@
 
 @section('main')
     <h1 class="mb-3">
-        Events {{ $isAuth ? 'you are hosting.' : ' hosted by ' . $username }}</h1>
+        Events {{ $isAuth ? 'you are hosting' : ' hosted by ' . $username }}</h1>
 
     <ul class="list-group">
 
