@@ -16,6 +16,7 @@
                 <li class="list-group-item">
                     <a href="{{ route('event', ['event_id' => $event->id]) }}">{{ $event->title }}</a>
                     <p>{{ $event->start }}</p>
+                    <p>{{ $event->location }}</p>
                 </li>
             @endforeach
         @endif
@@ -33,6 +34,7 @@
                     <li class="list-group-item">
                         <a href="{{ route('event', ['event_id' => $rsvp->event_id]) }}">{{ $rsvp->event->title }}</a>
                         <span class="badge bg-primary">{{ $rsvp->status->status }}</span>
+                        <p>{{ $rsvp->event->start }}</p>
                     </li>
                 @endforeach
             @endif
