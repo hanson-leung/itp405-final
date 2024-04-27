@@ -34,8 +34,10 @@
             </div>
         </nav>
 
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
+        @if (session('message'))
+            <div class="grid__container card--m errors card__text">
+                <p class="alert card-full">{{ session('message') }}</p>
+            </div>
         @endif
 
         @yield('main')

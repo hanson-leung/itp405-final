@@ -33,7 +33,7 @@ class CommentController extends Controller
         $comment = Comment::find($request->input('comment_id'));
         $comment->delete();
 
-        return redirect()->route('event', ['event_id' => $event_id]);
+        return redirect()->route('event', ['event_id' => $event_id])->with('message', 'Comment deleted');;
     }
 
     public function commentEdit($comment_id)
@@ -63,6 +63,6 @@ class CommentController extends Controller
         $comment->comment = $request->input('comment');
         $comment->save();
 
-        return redirect()->route('event', ['event_id' => $comment->event_id]);
+        return redirect()->route('event', ['event_id' => $comment->event_id])->with('message', 'Comment updated');;
     }
 }

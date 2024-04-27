@@ -1,6 +1,6 @@
 @extends('layouts/main')
 
-@section('title', 'Test Page')
+@section('title', 'Account')
 
 @section('main')
     <div class="card--max card__text grid__container">

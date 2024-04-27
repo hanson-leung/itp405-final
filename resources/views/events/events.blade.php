@@ -12,8 +12,9 @@
         <div class="card--max card__text grid__container">
             @if (count($events) === 0)
                 <div class="card--max">
-                    <h2>Aw man!</h2>
-                    <p>No upcoming events.</p>
+                    <h2>Let get it started in here</h2>
+                    <p><a href="{{ route('event.create') }}" class="nav-link">Host an
+                            event</a>.</p>
                 </div>
             @else
                 @foreach ($events as $event)
@@ -40,7 +41,7 @@
                 <div class="card--max card__text grid__container">
                     @if (count($rsvps) === 0)
                         <div class="card--max">
-                            <h2>Aw man!</h2>
+                            <h2>Where are my party people?</h2>
                             <p>No upcoming events.</p>
                         </div>
                     @else
@@ -59,7 +60,7 @@
         </div>
     @endif
 
-    @if ($pastEvents === 0 && $isAuth)
+    @if ($pastEvents !== 0 && $isAuth)
         <div class="card--max card__text grid__container">
             <div class="grid__container card--max">
                 <h1 class="card--max">Past events</h1>

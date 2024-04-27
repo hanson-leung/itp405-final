@@ -47,7 +47,7 @@ class RegistrationController extends Controller
 
             return redirect()->route('login.redirect');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Registration failed. Please try again.');
+            return redirect()->back()->with('message', 'Registration failed. Please try again.');
         }
     }
 }

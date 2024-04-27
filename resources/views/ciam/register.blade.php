@@ -17,7 +17,7 @@
                 <div class="card--min">
                     <label class="form-label" for="phone">Phone</label>
                 </div>
-                <input type="number" id="phone" name="phone" class="form-control" value="{{ old('phone') }}"
+                <input type="text" id="phone" name="phone" class="form-control" value="{{ $phone }}"
                     disabled>
             </div>
             <div class="grid__content grid__content--fixed card--m">

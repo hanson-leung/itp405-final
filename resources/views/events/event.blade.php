@@ -1,6 +1,6 @@
 @extends('layouts/main')
 
-@section('title', 'Event')
+@section('title', $event->title)
 
 @section('main')
     <div class="card--max card__text grid__container">
@@ -42,13 +42,17 @@
             <p>
                 {{-- attendee list --}}
                 @if ($attendees)
-                    @foreach ($attendees->take(3) as $attendee)
-                        {{ $attendee->user->name }}
+                    @foreach ($attendees->take(2) as $attendee)
+                        {{ $attendee->user->name }} @if ($attendeesCount > 2 && !$loop->last)
+                            ,
+                        @elseif ($loop->last)
+                        @else
+                            and
+                        @endif
                     @endforeach
-                    @if ($attendeesCount > 3)
-                        are {{ $attendeesCount - 3 }} more
+                    @if ($attendeesCount > 2)
+                        and {{ $attendeesCount - 2 }} other
                     @endif
-
                     @if ($attendeesCount > 0)
                         {{ $attendeesCount > 1 ? 'are' : 'is' }} attending.
                     @endif

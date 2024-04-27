@@ -87,7 +87,7 @@ class EventController extends Controller
             $event->user_id = Auth::id();
             $event->save();
 
-            return redirect()->route('event', ['event_id' => $event->id]);
+            return redirect()->route('event', ['event_id' => $event->id])->with('message', 'Event created');;
         }
     }
 
@@ -156,13 +156,15 @@ class EventController extends Controller
         $event->location = $request->input('location');
         $event->save();
 
-        return redirect()->route('event', [Event::find($event_id)]);
+        return redirect()->route('event', [Event::find($event_id)])->with('message', 'Event updated');;
     }
 
     // delete event
     public function delete(Request $request)
     {
         $event_id = $request->input('event_id');
+        $event_name = Event::find($event_id)->title;
+
         if (Auth::user()->cannot('delete', Event::find($event_id))) {
             abort(403, 'Unauthorized action.');
         }
@@ -170,6 +172,6 @@ class EventController extends Controller
         Rsvp::where('event_id',  $event_id)->delete();
         Comment::where('event_id',  $event_id)->delete();
         Event::destroy($event_id);
-        return redirect()->route('index', ['username' => Auth::user()->username]);
+        return redirect()->route('index', ['username' => Auth::user()->username])->with('message', $event_name . ' deleted');
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Models\Rsvp;
-
+use App\Models\Status;
 use Auth;
 
 class RsvpController extends Controller
@@ -19,6 +19,14 @@ class RsvpController extends Controller
             $request->session()->put('intent', 'rsvp');
             return redirect()->route('login');
         } else {
+            $request->validate([
+                'status_id' => 'required|numeric',
+                'event_id' => 'required|numeric',
+            ]);
+
+            $rsvpStatus = Status::find($request->input('status_id'));
+            $eventName = Event::find($request->input('event_id'))->title;
+
             // if already rsvp'd, update status
             $rsvp = Rsvp::where('user_id', Auth::user()->id)
                 ->where('event_id', $request->input('event_id'))
@@ -32,10 +40,10 @@ class RsvpController extends Controller
             }
 
             $rsvp->status_id = $request->input('status_id');
-
             $rsvp->save();
 
-            return redirect()->route('event', ['event_id' => $request->input('event_id')]);
+            return redirect()->route('event', ['event_id' => $request->input('event_id')])
+                ->with('message', "You've RSVP'd " . $rsvpStatus . " to " . $eventName);
         }
     }
 
@@ -53,7 +61,7 @@ class RsvpController extends Controller
             ->first();
 
         if (Auth::user()->id == Event::find($fakeRequest->input('event_id'))->user_id) {
-            return redirect()->route('event', ['event_id' => $fakeRequest->input('event_id')]);
+            return redirect()->route('index' 
         }
 
         if (!$rsvp) {

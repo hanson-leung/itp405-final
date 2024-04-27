@@ -14,7 +14,7 @@ class AuthController extends Controller
     {
         Auth::logout();
         session()->flush();
-        return redirect()->route('login');
+        return redirect()->route('login')->with('message', 'Successfully logged out');
     }
 
 
@@ -96,7 +96,7 @@ class AuthController extends Controller
         if ($wasLoginSuccessful) {
             return redirect()->route('login.redirect');
         } else {
-            return redirect()->route('login.verify')->with('error', 'Invalid password');
+            return redirect()->route('login.verify')->with('message', 'Invalid password');
         }
     }
 

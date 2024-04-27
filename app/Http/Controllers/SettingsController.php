@@ -29,6 +29,6 @@ class SettingsController extends Controller
         $user->username = request()->input('username');
         $user->save();
 
-        return redirect()->route('settings');
+        return redirect()->route('settings')->with('message', 'Account updated');
     }
 }

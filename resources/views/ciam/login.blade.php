@@ -15,7 +15,7 @@
                 <div class="card--min">
                     <label for="phone">Phone</label>
                 </div>
-                <input type="phone" id="phone" name="phone" class="form-control" value="{{ old('phone') }}">
+                <input type="text" id="phone" name="phone" class="form-control" value="{{ old('phone') }}">
             </div>
             <input type="submit" value="Continue" class="card--max grid--start">
         </form>
