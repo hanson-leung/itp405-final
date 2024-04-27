@@ -16,8 +16,8 @@
             <input type="text" id="username" name="username" class="form-control">
         </div>
         <div class="mb-3">
-            <label class="form-label" for="email">Email</label>
-            <input type="email" id="email" name="email" class="form-control">
+            <label class="form-label" for="phone">Phone</label>
+            <input type="number" id="phone" name="phone" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label" for="password">Password</label>

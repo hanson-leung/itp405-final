@@ -22,7 +22,7 @@ class RegistrationController extends Controller
         $user = new User();
         $user->name = $request->input('name');
         $user->username = $request->input('username');
-        $user->email = $request->input('email');
+        $user->phone = $request->input('phone');
         $user->password = Hash::make($request->input('password'));
         $user->save();
 

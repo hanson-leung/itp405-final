@@ -29,9 +29,6 @@ Route::get('/rsvp/handle', [RsvpController::class, 'handleRsvp'])->name('rsvp.ha
 // event
 Route::get('/!{event_id}', [EventController::class, 'event'])->name('event');
 
-// account
-Route::get('/settings', [SettingsController::class, 'settings'])->name('settings');
-
 // events
 Route::get('/@{username}', [EventController::class, 'events'])->name('index');
 
@@ -45,9 +42,13 @@ Route::middleware(['auth'])->group(function () {
     // logout
     Route::post('/logout', [AuthController::class, 'logoutRequest'])->name('logout.post');
 
+    // account
+    Route::get('/settings', [SettingsController::class, 'settings'])->name('settings');
+    Route::post('/settings', [SettingsController::class, 'settingsRequest'])->name('settings.post');
+
     // edit event
-    Route::get('/edit', [EventController::class, 'edit'])->name('event.edit');
-    Route::post('/edit', [EventController::class, 'editRequest'])->name('event.edit.post');
+    Route::get('/edit/!{event_id}', [EventController::class, 'edit'])->name('event.edit');
+    Route::post('/edit/!{event_id}', [EventController::class, 'editRequest'])->name('event.edit.post');
 
     // delete event
     Route::post('/delete', [EventController::class, 'delete'])->name('event.delete.post');

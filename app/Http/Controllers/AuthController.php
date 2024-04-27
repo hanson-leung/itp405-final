@@ -29,7 +29,7 @@ class AuthController extends Controller
     public function loginRequest(Request $request)
     {
         $wasLoginSuccessful = Auth::attempt([
-            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
             'password' => $request->input('password'),
         ]);
 
@@ -44,7 +44,7 @@ class AuthController extends Controller
             }
             return redirect()->route('index', ['username' => Auth::user()->username]);
         } else {
-            return redirect()->route('login')->with('error', 'Invalid email or password');
+            return redirect()->route('login')->with('error', 'Invalid phone or password');
         }
     }
 }

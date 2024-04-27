@@ -9,8 +9,8 @@
         action="{{ route('login.post', ['event_id' => $event_id ?? null, 'status_id' => $status_id ?? null]) }}">
         @csrf
         <div class="mb-3">
-            <label class="form-label" for="email">Email</label>
-            <input type="email" id="email" name="email" class="form-control">
+            <label class="form-label" for="phone">Phone</label>
+            <input type="phone" id="phone" name="phone" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label" for="password">Password</label>
