@@ -17,6 +17,17 @@
         </form>
     </div>
 
+    <div class="card--max card__text grid__container">
+        {{-- delete comment --}}
+        <form method="post" action="{{ route('comment.delete.post') }}">
+            @csrf
+            <input type="hidden" name="comment_id" value="{{ $comment->id }}">
+            <input type="submit" value="Delete" class="btn btn-danger">
+        </form>
+    </div>
+
+
+
     @if ($errors->any())
         <div class="grid__container card--m errors">
             <div class="card--full">

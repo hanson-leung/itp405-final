@@ -6,7 +6,7 @@
     <div class="card--max card__text grid__container">
         {{-- show edit button if event owner --}}
         @if ($isEventOwner)
-            <a href="{{ route('event.edit', ['event_id' => $event->id]) }}" class="card--max">Edit</a>
+            <a href="{{ route('event.edit', ['event_id' => $event->id]) }}" class="card--max">Edit event</a>
         @endif
 
         {{-- event title --}}
@@ -96,7 +96,7 @@
                 <p>You must RSVP to leave a comment.</p>
             @endif
         @else
-            <p><a href="{{ route('login', ['event_id' => $event->id]) }}">Login</a> to leave a comment.</p>
+            <p><a href="{{ route('login') }}">Login</a> to leave a comment.</p>
         @endif
     </div>
 
@@ -113,24 +113,13 @@
                             @else
                                 ({{ \Carbon\Carbon::parse($comment->created_at)->format('F j, Y \a\t g:i A') }})
                             @endif
+                            @if (Auth::user() && $comment->user->id === Auth::user()->id)
+                                {{-- edit comment --}}
+                                <a href="{{ route('comment.edit', ['comment_id' => $comment->id]) }}">Edit</a>
+                            @endif
                         </p>
                         <p>{{ $comment->comment }}</p>
                     </div>
-                    @if (Auth::user() && $comment->user->id === Auth::user()->id)
-                        <div class="card--s grid__container">
-                            {{-- edit comment --}}
-                            <form action="{{ route('comment.edit', ['comment_id' => $comment->id]) }}">
-                                @csrf
-                                <input type="submit" value="Edit" class="btn btn-primary">
-                            </form>
-                            {{-- delete comment --}}
-                            <form method="post" action="{{ route('comment.delete.post') }}">
-                                @csrf
-                                <input type="hidden" name="comment_id" value="{{ $comment->id }}">
-                                <input type="submit" value="Delete" class="btn btn-danger">
-                            </form>
-                        </div>
-                    @endif
                 @endforeach
             </ul>
         @endif

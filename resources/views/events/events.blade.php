@@ -4,7 +4,6 @@
 
 @section('main')
     <div class="card--max card__text grid__container">
-        <a href="{{ route('event.create') }}" class="card--max">Create an event</a>
         <h1 class="card--max">
             Events {{ $isAuth ? "you're hosting" : ' hosted by ' . $username }}
         </h1>
@@ -57,5 +56,26 @@
                     </ul>
                 </div>
             </div>
+        </div>
+    @endif
+
+    @if ($pastEvents === 0 && $isAuth)
+        <div class="card--max card__text grid__container">
+            <div class="grid__container card--max">
+                <h1 class="card--max">Past events</h1>
+            </div>
+
+            <div class="card--max card__text grid__container">
+                @foreach ($pastEvents as $pastEvent)
+                    <div class="card--s">
+                        <a href="{{ route('event', ['event_id' => $pastEvent->id]) }}">
+                            <h2>{{ $pastEvent->title }}</h2>
+                        </a>
+                        <p>{{ \Carbon\Carbon::parse($pastEvent->start)->diffForHumans() }}</p>
+                        <p>{{ $pastEvent->location }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     @endif
 @endsection

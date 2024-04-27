@@ -23,8 +23,12 @@
                         'username' => Auth::user()->username,
                     ]) }}"
                         class="nav-link">Party central</a>
-                    <a href="{{ route('settings') }}" class="nav-link">Account</a>
+                    <div class="grid__content">
+                        <a href="{{ route('event.create') }}" class="nav-link">Create an event</a>
+                        <a href="{{ route('settings') }}" class="nav-link">Account</a>
+                    </div>
                 @else
+                    <a href="{{ route('event.create') }}" class="nav-link">Create an event</a>
                     <a href="/login" class="nav-link">Login</a>
                 @endif
             </div>

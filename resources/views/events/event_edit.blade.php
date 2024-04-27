@@ -48,4 +48,13 @@
             <input type="submit" value="Save" class="btn btn-primary">
         </form>
     </div>
+
+    {{-- delete event --}}
+    <div class="card--max card__text grid__container">
+        <form method="post" action="{{ route('event.delete.post') }}" class="grid__container card--m">
+            @csrf
+            <input type="hidden" name="event_id" value="{{ $event->id }}">
+            <input type="submit" value="Delete" class="btn btn-danger">
+        </form>
+    </div>
 @endsection

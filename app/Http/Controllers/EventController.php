@@ -25,7 +25,8 @@ class EventController extends Controller
             [
                 'username' => User::where('id', $user_id)->first()->name,
                 'isAuth' => Auth::check() && Auth::user()->id === $user_id,
-                'events' => Event::with(['user'])->where('user_id', $user_id)->orderBy('start', 'desc')->get(),
+                'events' => Event::with(['user'])->where('user_id', $user_id)->where('start', '>', now())->orderBy('start', 'asc')->get(),
+                'pastEvents' => Event::with(['user'])->where('user_id', $user_id)->where('start', '<', now())->orderBy('start', 'desc')->get(),
                 'rsvps' => Rsvp::with(['user'])->whereIn('status_id', [1, 3])->where('user_id', $user_id)->get()->sortByDesc('start'),
             ]
         );
@@ -159,12 +160,15 @@ class EventController extends Controller
     }
 
     // delete event
-    public function delete($event_id)
+    public function delete(Request $request)
     {
+        $event_id = $request->input('event_id');
         if (Auth::user()->cannot('delete', Event::find($event_id))) {
             abort(403, 'Unauthorized action.');
         }
 
+        Rsvp::where('event_id',  $event_id)->delete();
+        Comment::where('event_id',  $event_id)->delete();
         Event::destroy($event_id);
         return redirect()->route('index', ['username' => Auth::user()->username]);
     }
