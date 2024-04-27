@@ -6,43 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+        integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://www.hansonleung.co/css/style_v9.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="icon" href="https://hansonleung.co/favicon.png" type="image/png">
 </head>
 
-<body>
-    <div class="container mt-3">
-        <ul class="nav d-flex justify-content-end">
-            @if (Auth::check())
-                {{-- if logged in, show profile and logout links --}}
-                <li class="nav-item">
-                    <a href="{{ route('index', [
-                        'username' => Auth::user()->username,
-                    ]) }}"
-                        class="nav-link">Party Central</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('settings') }}" class="nav-link">Settings</a>
-                </li>
-                <li class="nav-item">
-                    <form method="post" action="{{ route('logout.post') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-link nav-link">Logout</button>
-                    </form>
-                </li>
-            @else
-                <li class="nav-item">
-                    <a href="/login" class="nav-link">Login</a>
-                </li>
-            @endif
-        </ul>
+<body style="opacity: 1 !important">
+    <section class="grid space--l">
+        <nav class="card--max">
+            <div class="grid__info">
+                @if (Auth::check())
+                    {{-- if logged in, show profile and logout links --}}
+                    <div class="nav-item">
+                        <a href="{{ route('index', [
+                            'username' => Auth::user()->username,
+                        ]) }}"
+                            class="nav-link">Party central</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ route('settings') }}" class="nav-link">Account</a>
+                    </div>
+                @else
+                    <div class="nav-item">
+                        <a href="/login" class="nav-link">Login</a>
+                @endif
+            </div>
+            </div>
+        </nav>
 
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
         @yield('main')
-    </div>
+    </section>
 </body>
 
 </html>

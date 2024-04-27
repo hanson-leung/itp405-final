@@ -3,14 +3,17 @@
 @section('title', 'Event')
 
 @section('main')
-    <form method="post" action="{{ route('comment.edit.post', ['comment_id' => $comment->id]) }}">
-        @csrf
-        <div class="mb-3">
-            <label class="form-label
-        " for="comment">comment</label>
-            <textarea id="comment" name="comment" class="form-control">{{ old('comment', $comment->comment) }}</textarea>
-        </div>
-        <input type="submit" value="Edit" class="btn btn-primary">
-    </form>
-
+    <div class="card--max card__text grid__container">
+        <form method="post" action="{{ route('comment.edit.post', ['comment_id' => $comment->id]) }}"
+            class="grid__container card--m">
+            @csrf
+            <div class="grid__content grid__content--fixed card--m">
+                <div class="card--min">
+                    <label class="form-label" for="comment">Comment</label>
+                </div>
+                <textarea id="comment" name="comment" class="">{{ old('comment', $comment->comment) }}</textarea>
+            </div>
+            <input type="submit" value="Update" class="btn btn-primary">
+        </form>
+    </div>
 @endsection

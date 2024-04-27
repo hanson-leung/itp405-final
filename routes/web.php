@@ -10,8 +10,8 @@ use App\Http\Controllers\CommentController;
 
 // test page
 Route::get('/', function () {
-    return view('test');
-})->name('test');
+    return redirect()->route('event.create');
+});
 
 // registration
 Route::get('/register', [RegistrationController::class, 'register'])->name('register');

@@ -15,6 +15,10 @@ class EventController extends Controller
     // events
     public function events($username)
     {
+        if (!User::where('username', $username)->exists()) {
+            abort(404, 'User not found.');
+        }
+
         $user_id = User::where('username', $username)->first()->id;
         return view(
             'events.events',
@@ -30,9 +34,14 @@ class EventController extends Controller
     // event
     public function event($event_id)
     {
+        if (!Event::where('id', $event_id)->exists()) {
+            abort(404, 'Event not found.');
+        }
+
         return view(
             'events.event',
             [
+                'isEventOwner' => Auth::check() && Auth::user()->id === Event::find($event_id)->user_id,
                 'event' => Event::find($event_id),
                 'rsvpOptions' => Status::all(),
                 'userRsvp' => Rsvp::where('event_id', $event_id)->where('user_id', Auth::id())->first(),

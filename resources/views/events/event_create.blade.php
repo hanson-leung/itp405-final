@@ -3,34 +3,44 @@
 @section('title', 'Create Event')
 
 @section('main')
-    <h1 class="mb-5">Create</h1>
+    <div class="card--max card__text grid__container">
+        <h1 class="card--max">Create</h1>
+    </div>
 
-    <form method="post" action="{{ route('event.create.post') }}">
-        @csrf
-        <div class="mb-3">
-            <label class="form-label" for="title">Title</label>
-            <input type="text" id="title" name="title" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label
-            " for="description">Description</label>
-            <textarea id="description" name="description" class="form-control"></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label
-            " for="start">Start</label>
-            <input type="datetime-local" id="start" name="start" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label
-            " for="end">End</label>
-            <input type="datetime-local" id="end" name="end" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label
-            " for="location">Location</label>
-            <input type="text" id="location" name="location" class="form-control">
-        </div>
-        <input type="submit" value="Create" class="btn btn-primary">
-    </form>
+    <div class="card--max card__text grid__container">
+        <form method="post" action="{{ route('event.create.post') }}" class="grid__container card--m">
+            @csrf
+            <div class="grid__content grid__content--fixed card--m">
+                <div class="card--min">
+                    <label class="form-label" for="title">Title</label>
+                </div>
+                <input type="text" id="title" name="title" class="form-control">
+            </div>
+            <div class="grid__content grid__content--fixed card--m">
+                <div class="card--min">
+                    <label class="form-label" for="description">Description</label>
+                </div>
+                <textarea id="description" name="description" class="form-control"></textarea>
+            </div>
+            <div class="grid__content grid__content--fixed card--m">
+                <div class="card--min">
+                    <label class="form-label" for="start">Start</label>
+                </div>
+                <input type="datetime-local" id="start" name="start" class="form-control">
+            </div>
+            <div class="grid__content grid__content--fixed card--m">
+                <div class="card--min">
+                    <label class="form-label" for="end">End</label>
+                </div>
+                <input type="datetime-local" id="end" name="end" class="form-control">
+            </div>
+            <div class="grid__content grid__content--fixed card--m">
+                <div class="card--min">
+                    <label class="form-label" for="location">Location</label>
+                </div>
+                <input type="text" id="location" name="location" class="form-control">
+            </div>
+            <input type="submit" value="Create" class="">
+        </form>
+    </div>
 @endsection
