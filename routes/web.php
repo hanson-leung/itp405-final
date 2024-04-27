@@ -20,6 +20,11 @@ Route::post('/register', [RegistrationController::class, 'registerRequest'])->na
 // login
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginRequest'])->name('login.post');
+Route::get('/login/verify', [AuthController::class, 'loginVerify'])->name('login.verify');
+Route::post('/login/verify', [AuthController::class, 'loginVerifyRequest'])->name('login.verify.post');
+
+// redirect on login
+Route::get('/login/redirect', [AuthController::class, 'loginRedirect'])->name('login.redirect');
 
 // rsvp
 Route::post('/rsvp', [RsvpController::class, 'rsvpRequest'])->name('rsvp.post');

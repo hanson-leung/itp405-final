@@ -32,9 +32,6 @@
                 </li>
             @else
                 <li class="nav-item">
-                    <a href="{{ route('register') }}" class="nav-link">Register</a>
-                </li>
-                <li class="nav-item">
                     <a href="/login" class="nav-link">Login</a>
                 </li>
             @endif

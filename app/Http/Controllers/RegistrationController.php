@@ -12,22 +12,35 @@ class RegistrationController extends Controller
     // register
     public function register()
     {
-        return view('ciam.register');
+        if (!session()->has('phone')) {
+            return redirect()->route('login');
+        }
+
+        return view(
+            'ciam.register',
+            [
+                'phone' => session()->get('phone'),
+            ]
+        );
     }
 
 
     // register request
     public function registerRequest(Request $request)
     {
-        $user = new User();
-        $user->name = $request->input('name');
-        $user->username = $request->input('username');
-        $user->phone = $request->input('phone');
-        $user->password = Hash::make($request->input('password'));
-        $user->save();
+        try {
+            $user = new User();
+            $user->name = $request->input('name');
+            $user->username = $request->input('username');
+            $user->phone = session()->get('phone');
+            $user->password = Hash::make($request->input('password'));
+            $user->save();
 
-        Auth::login($user);
+            Auth::login($user);
 
-        return redirect()->route('index', ['username' => Auth::user()->username]);
+            return redirect()->route('login.redirect');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Registration failed. Please try again.');
+        }
     }
 }
