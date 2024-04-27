@@ -62,6 +62,15 @@ class EventController extends Controller
 
     public function createRequest(Request $request)
     {
+        // validate request
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'string|nullable',
+            'start' => 'required|date|after:now',
+            'end' => 'date|after:start|nullable',
+            'location' => 'string|max:255|nullable',
+        ]);
+
         if (!Auth::check()) {
             // Store the post request in the session
             $request->session()->put('request', $request->all());
@@ -128,6 +137,15 @@ class EventController extends Controller
         if (Auth::user()->cannot('edit', Event::find($event_id))) {
             abort(403, 'Unauthorized action.');
         }
+
+        // validate request
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'string|nullable',
+            'start' => 'required|date|after:now',
+            'end' => 'date|after:start|nullable',
+            'location' => 'string|max:255|nullable',
+        ]);
 
         $event = Event::find($event_id);
         $event->title = $request->input('title');

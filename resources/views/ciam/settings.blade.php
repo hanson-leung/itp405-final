@@ -25,7 +25,7 @@
                     <label class="form-label" for="phone">Phone</label>
                 </div>
                 <input type="number" id="phone" name="phone" class="form-control"
-                    value="{{ old('phone', $user->phone) }}">
+                    value="{{ old('phone', $user->phone) }}" disabled>
             </div>
             <input type="submit" value="Update" class="btn btn-primary">
         </form>

@@ -38,11 +38,21 @@ class AuthController extends Controller
     // login request
     public function loginRequest(Request $request)
     {
+        // validate phone
+        $request->validate([
+            'phone' => 'required|numeric|digits:10',
+        ]);
+
+        // store phone in session
         session()->put('phone', $request->input('phone'));
+
+        // check if user exists
         $isReturningUser = User::where('phone', $request->input('phone'))->exists();
         if ($isReturningUser) {
+            // if exists, redirect to login verify
             return redirect()->route('login.verify');
         } else {
+            // if not exists, redirect to register
             return redirect()->route('register');
         }
     }
@@ -73,6 +83,11 @@ class AuthController extends Controller
     // login verify request
     public function loginVerifyRequest(Request $request)
     {
+        // validate request
+        $request->validate([
+            'password' => 'required|string|max:255',
+        ]);
+
         $wasLoginSuccessful = Auth::attempt([
             'phone' => session()->get('phone'),
             'password' => $request->input('password'),

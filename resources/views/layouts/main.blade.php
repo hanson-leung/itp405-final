@@ -19,20 +19,14 @@
             <div class="grid__info">
                 @if (Auth::check())
                     {{-- if logged in, show profile and logout links --}}
-                    <div class="nav-item">
-                        <a href="{{ route('index', [
-                            'username' => Auth::user()->username,
-                        ]) }}"
-                            class="nav-link">Party central</a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ route('settings') }}" class="nav-link">Account</a>
-                    </div>
+                    <a href="{{ route('index', [
+                        'username' => Auth::user()->username,
+                    ]) }}"
+                        class="nav-link">Party central</a>
+                    <a href="{{ route('settings') }}" class="nav-link">Account</a>
                 @else
-                    <div class="nav-item">
-                        <a href="/login" class="nav-link">Login</a>
+                    <a href="/login" class="nav-link">Login</a>
                 @endif
-            </div>
             </div>
         </nav>
 
@@ -41,6 +35,18 @@
         @endif
 
         @yield('main')
+
+        @if ($errors->any())
+            <div class="grid__container card--m errors card__text">
+                <div class="card--full">
+                    @foreach ($errors->all() as $error)
+                        <p class="alert">
+                            {{ $error }}
+                        </p>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </section>
 </body>
 

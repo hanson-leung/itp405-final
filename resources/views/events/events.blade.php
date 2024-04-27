@@ -4,10 +4,11 @@
 
 @section('main')
     <div class="card--max card__text grid__container">
+        <a href="{{ route('event.create') }}" class="card--max">Create an event</a>
         <h1 class="card--max">
             Events {{ $isAuth ? "you're hosting" : ' hosted by ' . $username }}
         </h1>
-        <a href="{{ route('event.create') }}" class="card--max">Create event</a>
+
 
         <div class="card--max card__text grid__container">
             @if (count($events) === 0)
@@ -21,7 +22,7 @@
                         <a href="{{ route('event', ['event_id' => $event->id]) }}">
                             <h2>{{ $event->title }}</h2>
                         </a>
-                        <p>{{ $event->start }}</p>
+                        <p>{{ \Carbon\Carbon::parse($event->start)->diffForHumans() }}</p>
                         <p>{{ $event->location }}</p>
                     </div>
                 @endforeach
@@ -49,7 +50,7 @@
                                 <a
                                     href="{{ route('event', ['event_id' => $rsvp->event_id]) }}">{{ $rsvp->event->title }}</a>
                                 <span class="badge bg-primary">{{ $rsvp->status->status }}</span>
-                                <p>{{ $rsvp->event->start }}</p>
+                                <p>{{ \Carbon\Carbon::parse($rsvp->event->start)->diffForHumans(null, true) }}</p>
                             </div>
                         @endforeach
                     @endif

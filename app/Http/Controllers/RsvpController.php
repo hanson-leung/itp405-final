@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Models\Rsvp;
 
@@ -50,6 +51,10 @@ class RsvpController extends Controller
         $rsvp = Rsvp::where('user_id', Auth::user()->id)
             ->where('event_id', $fakeRequest->input('event_id'))
             ->first();
+
+        if (Auth::user()->id == Event::find($fakeRequest->input('event_id'))->user_id) {
+            return redirect()->route('event', ['event_id' => $fakeRequest->input('event_id')]);
+        }
 
         if (!$rsvp) {
             $rsvp = new Rsvp();

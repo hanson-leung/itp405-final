@@ -16,4 +16,16 @@
             <input type="submit" value="Update" class="btn btn-primary">
         </form>
     </div>
+
+    @if ($errors->any())
+        <div class="grid__container card--m errors">
+            <div class="card--full">
+                @foreach ($errors->all() as $error)
+                    <p class="alert">
+                        {{ $error }}
+                    </p>
+                @endforeach
+            </div>
+        </div>
+    @endif
 @endsection

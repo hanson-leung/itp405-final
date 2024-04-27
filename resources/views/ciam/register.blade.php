@@ -3,7 +3,6 @@
 @section('title', 'Register')
 
 @section('main')
-
     <div class="card--max card__text grid__container">
         <h1 class="card--max">Create an account</h1>
         <p class="card--max">Get ready to party!</p>
@@ -18,20 +17,20 @@
                 <div class="card--min">
                     <label class="form-label" for="phone">Phone</label>
                 </div>
-                <input type="number" id="phone" name="phone" class="form-control" value="{{ $phone }}"
+                <input type="number" id="phone" name="phone" class="form-control" value="{{ old('phone') }}"
                     disabled>
             </div>
             <div class="grid__content grid__content--fixed card--m">
                 <div class="card--min">
                     <label class="form-label" for="name">Full name</label>
                 </div>
-                <input type="text" id="name" name="name" class="form-control">
+                <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}">
             </div>
             <div class="grid__content grid__content--fixed card--m">
                 <div class="card--min">
                     <label class="form-label" for="username">Username</label>
                 </div>
-                <input type="text" id="username" name="username" class="form-control">
+                <input type="text" id="username" name="username" class="form-control" value="{{ old('username') }}">
             </div>
             <div class="grid__content grid__content--fixed card--m">
                 <div class="card--min">

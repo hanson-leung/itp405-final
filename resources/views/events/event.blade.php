@@ -4,13 +4,13 @@
 
 @section('main')
     <div class="card--max card__text grid__container">
-        {{-- event title --}}
-        <h1 class="card--max">{{ $event->title }}</h1>
-
         {{-- show edit button if event owner --}}
         @if ($isEventOwner)
             <a href="{{ route('event.edit', ['event_id' => $event->id]) }}" class="card--max">Edit</a>
         @endif
+
+        {{-- event title --}}
+        <h1 class="card--max">{{ $event->title }}</h1>
     </div>
 
     <div class="card--max card__text grid__container">
@@ -19,15 +19,17 @@
             <p>Hosted by {{ $isEventOwner ? 'you' : $event->user->name }}</p>
 
             {{-- event start --}}
-            <p>{{ $event->start }}
+            {{ \Carbon\Carbon::parse($event->start)->format('F j, Y \a\t g:i A') }}
 
-                {{-- event end --}}
-                @if ($event->end)
-                    to {{ $event->end }}
+            {{-- event end --}}
+            @if ($event->end)
+                @if (\Carbon\Carbon::parse($event->start)->isSameDay(\Carbon\Carbon::parse($event->end)))
+                    to {{ \Carbon\Carbon::parse($event->end)->format('g:i A') }}
+                @else
+                    to {{ \Carbon\Carbon::parse($event->end)->format('F j, Y \a\t g:i A') }}
                 @endif
-            </p>
+            @endif
 
-            {{-- event description --}}
             <p>{{ $event->description }}</p>
 
             {{-- event location --}}
@@ -44,11 +46,11 @@
                         {{ $attendee->user->name }}
                     @endforeach
                     @if ($attendeesCount > 3)
-                        and {{ $attendeesCount - 3 }} more
+                        are {{ $attendeesCount - 3 }} more
                     @endif
 
                     @if ($attendeesCount > 0)
-                        {{ $attendeesCount > 1 ? 'are' : 'is' }} going.
+                        {{ $attendeesCount > 1 ? 'are' : 'is' }} attending.
                     @endif
                 @endif
             </p>
@@ -78,14 +80,14 @@
         @endif
 
 
-        {{-- if logged in and rsvped or the event owner, leave and comment --}}
+        {{-- comment form --}}
         @if (Auth::check())
             @if ($userRsvp || Auth::user()->id === $event->user_id)
                 <form method="post" action="{{ route('comment.post') }}" class="grid__container card--m">
                     @csrf
                     <div class="grid__content grid__content--fixed card--m">
                         <label class="card--min" for="comment">Comment</label>
-                        <textarea id="comment" name="comment" class=""></textarea>
+                        <textarea id="comment" name="comment" class="card--max">{{ old('comment') }}</textarea>
                     </div>
                     <input type="hidden" name="event_id" value="{{ $event->id }}">
                     <input type="submit" value="Submit" class="btn btn-primary">
@@ -98,22 +100,30 @@
         @endif
     </div>
 
+    {{-- comments --}}
     <div class="card--max card__text grid__container">
-
-        {{-- if comments, show comments --}}
         @if ($comments)
             <ul class="grid__container card--max">
+                {{-- show all comments --}}
                 @foreach ($comments as $comment)
                     <div class="card--max">
-                        <p>{{ $isEventOwner ? 'You' : $event->user->name }} at <span>{{ $comment->created_at }}</span></p>
+                        <p>{{ $isEventOwner ? 'You' : $event->user->name }}
+                            @if (\Carbon\Carbon::parse($comment->created_at)->diffInHours() < 12)
+                                ({{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }})
+                            @else
+                                ({{ \Carbon\Carbon::parse($comment->created_at)->format('F j, Y \a\t g:i A') }})
+                            @endif
+                        </p>
                         <p>{{ $comment->comment }}</p>
                     </div>
                     @if (Auth::user() && $comment->user->id === Auth::user()->id)
                         <div class="card--s grid__container">
+                            {{-- edit comment --}}
                             <form action="{{ route('comment.edit', ['comment_id' => $comment->id]) }}">
                                 @csrf
                                 <input type="submit" value="Edit" class="btn btn-primary">
                             </form>
+                            {{-- delete comment --}}
                             <form method="post" action="{{ route('comment.delete.post') }}">
                                 @csrf
                                 <input type="hidden" name="comment_id" value="{{ $comment->id }}">
@@ -125,4 +135,5 @@
             </ul>
         @endif
     </div>
+
 @endsection

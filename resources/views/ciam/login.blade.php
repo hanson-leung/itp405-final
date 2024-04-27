@@ -17,7 +17,7 @@
                 </div>
                 <input type="phone" id="phone" name="phone" class="form-control" value="{{ old('phone') }}">
             </div>
-            <input type="submit" value="Continue">
+            <input type="submit" value="Continue" class="card--max grid--start">
         </form>
     </div>
 @endsection

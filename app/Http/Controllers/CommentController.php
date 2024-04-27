@@ -10,6 +10,10 @@ class CommentController extends Controller
 {
     public function commentRequest(Request $request)
     {
+        $request->validate([
+            'comment' => 'required|max:255',
+        ]);
+
         $comment = new Comment();
         $comment->user_id = Auth::id();
         $comment->event_id = $request->input('event_id');
@@ -50,6 +54,10 @@ class CommentController extends Controller
         if (Auth::user()->cannot('edit', Comment::find($comment_id))) {
             abort(403, 'Unauthorized action.');
         }
+
+        $request->validate([
+            'comment' => 'required|max:255',
+        ]);
 
         $comment = Comment::find($comment_id);
         $comment->comment = $request->input('comment');
