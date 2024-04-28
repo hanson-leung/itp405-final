@@ -47,10 +47,15 @@
                     @else
                         @foreach ($rsvps as $rsvp)
                             <div class="card--s">
-                                <a
-                                    href="{{ route('event', ['event_id' => $rsvp->event_id]) }}">{{ $rsvp->event->title }}</a>
+                                <p>RSVP'd {{ \Carbon\Carbon::parse($rsvp->updated_at)->diffForHumans(null, true) }} ago</p>
+                                <a href="{{ route('event', ['event_id' => $rsvp->event_id]) }}">
+                                    <h2> {{ $rsvp->event->title }} </h2>
+                                </a>
+
                                 <span class="badge bg-primary">{{ $rsvp->status->status }}</span>
-                                <p>{{ \Carbon\Carbon::parse($rsvp->event->start)->diffForHumans(null, true) }}</p>
+
+                                <p>In {{ \Carbon\Carbon::parse($rsvp->event->start)->diffForHumans(null, true) }}</p>
+
                             </div>
                         @endforeach
                     @endif

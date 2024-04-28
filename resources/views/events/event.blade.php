@@ -38,27 +38,21 @@
             @endif
 
         </div>
-        <div class="card--max">
-            <p>
-                {{-- attendee list --}}
-                @if ($attendees)
+        @if ($attendees)
+            <p>Guest list ({{ $attendees->where('status_id', 1)->count() }} going,
+                {{ $attendees->where('status_id', 3)->count() }} maybe)</p>
+            <div class="card--max grid__container">
+                {{-- show all attendees --}}
+                <a id="guestlist" href="#" class="grid__content">
                     @foreach ($attendees->take(2) as $attendee)
-                        {{ $attendee->user->name }} @if ($attendeesCount > 2 && !$loop->last)
-                            ,
-                        @elseif ($loop->last)
-                        @else
-                            and
-                        @endif
+                        <p>{{ $attendee->user->name }}</p>
                     @endforeach
-                    @if ($attendeesCount > 2)
-                        and {{ $attendeesCount - 2 }} other
+                    @if ($attendees->count() > 2)
+                        <p>+ {{ $attendees->count() - 2 }} more</p>
                     @endif
-                    @if ($attendeesCount > 0)
-                        {{ $attendeesCount > 1 ? 'are' : 'is' }} attending.
-                    @endif
-                @endif
-            </p>
-        </div>
+                </a>
+            </div>
+        @endif
     </div>
 
 
@@ -105,8 +99,9 @@
     </div>
 
     {{-- comments --}}
-    <div class="card--max card__text grid__container">
-        @if ($comments)
+    @if ($comments)
+        <div class="card--max card__text grid__container">
+
             <ul class="grid__container card--max">
                 {{-- show all comments --}}
                 @foreach ($comments as $comment)
@@ -126,7 +121,47 @@
                     </div>
                 @endforeach
             </ul>
-        @endif
-    </div>
+        </div>
+    @endif
 
+
+    {{-- guests --}}
+    @if ($attendees)
+        <div class="modal">
+            <div class="modal-content">
+                <span class="modal-close">&times;</span>
+                <div class="card--max card__text grid__container">
+                    <p>Going</p>
+                    @foreach ($attendees->where('status_id', 1) as $attendee)
+                        <p>{{ $attendee->user->name }}</p>
+                    @endforeach
+                </div>
+
+                <div class="card--max card__text grid__container">
+                    <p>Maybe</p>
+                    @foreach ($attendees->where('status_id', 3) as $attendee)
+                        <p>{{ $attendee->user->name }}</p>
+                    @endforeach
+                </div>
+
+                @if ($isEventOwner)
+                    <div class="card--max card__text grid__container">
+                        <p>Not going</p>
+                        @foreach ($attendees->where('status_id', 2) as $attendee)
+                            <p>{{ $attendee->user->name }}</p>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    @endif
+
+    <script>
+        $('#guestlist').on('click', function() {
+            $('.modal').show()
+        })
+        $('.modal-close').on('click', function() {
+            $('.modal').hide()
+        })
+    </script>
 @endsection

@@ -43,7 +43,7 @@ class RsvpController extends Controller
             $rsvp->save();
 
             return redirect()->route('event', ['event_id' => $request->input('event_id')])
-                ->with('message', "You've RSVP'd " . $rsvpStatus . " to " . $eventName);
+                ->with('message', "You've RSVP'd " . strtolower($rsvpStatus->status) . " to " . $eventName);
         }
     }
 
@@ -61,7 +61,10 @@ class RsvpController extends Controller
             ->first();
 
         if (Auth::user()->id == Event::find($fakeRequest->input('event_id'))->user_id) {
-            return redirect()->route('index' 
+            return redirect()->route(
+                'event',
+                ['event_id' => $fakeRequest->input('event_id')]
+            )->with('message', "I hope you're at your own event!");
         }
 
         if (!$rsvp) {
@@ -70,11 +73,15 @@ class RsvpController extends Controller
             $rsvp->user_id = Auth::user()->id;
         }
 
+        $rsvpStatus = strtolower(Status::find($fakeRequest->input('status_id'))->status);
+        $eventName = Event::find($fakeRequest->input('event_id'))->title;
+
         $rsvp->status_id = $fakeRequest->input('status_id');
         $rsvp->save();
 
         $request->session()->forget(['request', 'intent']);
 
-        return redirect()->route('event', ['event_id' => $fakeRequest->input('event_id')]);
+        return redirect()->route('event', ['event_id' => $fakeRequest->input('event_id')])
+            ->with('message', "You've RSVP'd " . $rsvpStatus . " to " . $eventName);
     }
 }

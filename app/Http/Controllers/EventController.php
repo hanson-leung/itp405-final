@@ -36,22 +36,23 @@ class EventController extends Controller
     public function event($event_id)
     {
         if (!Event::where('id', $event_id)->exists()) {
-            abort(404, 'Event not found.');
+            abort(
+                404,
+                'Event not found.'
+            );
         }
 
-        return view(
-            'events.event',
-            [
-                'isEventOwner' => Auth::check() && Auth::user()->id === Event::find($event_id)->user_id,
-                'event' => Event::find($event_id),
-                'rsvpOptions' => Status::all(),
-                'userRsvp' => Rsvp::where('event_id', $event_id)->where('user_id', Auth::id())->first(),
-                'attendees' => Rsvp::with(['status'])->where('event_id', $event_id)->get(),
-                'attendeesCount' => Rsvp::where('event_id', $event_id)->whereIn('status_id', [1, 3])->count(),
-                'comments' => Comment::with(['user'])->where('event_id', $event_id)->orderBy('created_at', 'desc')->get(),
-            ]
-        );
+        return view('events.event', [
+            'isEventOwner' => Auth::check() && Auth::user()->id === Event::find($event_id)->user_id,
+            'event' => Event::find($event_id),
+            'rsvpOptions' => Status::all(),
+            'userRsvp' => Rsvp::where('event_id', $event_id)->where('user_id', Auth::id())->first(),
+            'attendees' => Rsvp::with('user')->where('event_id', $event_id)->whereNotIn('status_id', [2])->get(),
+            'comments' => Comment::with('user')->where('event_id', $event_id)->orderBy('created_at', 'desc')->get(),
+        ]);
     }
+
+
 
     // create event
     public function create()
@@ -114,7 +115,7 @@ class EventController extends Controller
         $request->session()->forget(['request', 'intent']);
 
         return redirect()->route('event', ['event_id'
-        => $event->id]);
+        => $event->id])->with('message', 'Event created');
     }
 
 
