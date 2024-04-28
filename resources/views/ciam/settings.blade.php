@@ -4,6 +4,10 @@
 
 @section('main')
     <div class="card--max card__text grid__container">
+        <h1 class="card--max">Account</h1>
+    </div>
+
+    <div class="card--max card__text grid__container">
         <form method="post" action="{{ route('settings.post') }}" class="grid__container card--m">
             @csrf
             <div class="grid__content grid__content--fixed card--m">
@@ -34,7 +38,7 @@
     <div class="card--max card__text grid__container">
         <form method="post" action="{{ route('logout.post') }}">
             @csrf
-            <button type="submit" class="btn btn-link nav-link">Logout</button>
+            <button type="submit" class="btn btn-danger nav-link">Logout</button>
         </form>
     </div>
 @endsection

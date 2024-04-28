@@ -9,21 +9,20 @@
         </h1>
 
 
-        <div class="card--max card__text grid__container">
+        <div class="card--max  grid__container">
             @if (count($events) === 0)
                 <div class="card--max">
-                    <h2>Let get it started in here</h2>
+                    <p>Let get it started in here</p>
                     <p><a href="{{ route('event.create') }}" class="nav-link">Host an
                             event</a>.</p>
                 </div>
             @else
                 @foreach ($events as $event)
-                    <div class="card--s">
+                    <div class="card--max">
                         <a href="{{ route('event', ['event_id' => $event->id]) }}">
-                            <h2>{{ $event->title }}</h2>
+                            <p>{{ $event->title }}</p>
                         </a>
                         <p>{{ \Carbon\Carbon::parse($event->start)->diffForHumans() }}</p>
-                        <p>{{ $event->location }}</p>
                     </div>
                 @endforeach
             @endif
@@ -32,24 +31,25 @@
 
 
     @if ($isAuth)
+        <hr class="card--max">
         <div class="card--max card__text grid__container">
             <div class="grid__container card--max">
                 <h1 class="card--max">Upcoming events</h1>
             </div>
 
             <div class="grid__container card--max">
-                <div class="card--max card__text grid__container">
+                <div class="card--max  grid__container">
                     @if (count($rsvps) === 0)
                         <div class="card--max">
-                            <h2>Where are my party people?</h2>
+                            <p>Where are my party people?</p>
                             <p>No upcoming events.</p>
                         </div>
                     @else
                         @foreach ($rsvps as $rsvp)
-                            <div class="card--s">
+                            <div class="card--max">
                                 <p>RSVP'd {{ \Carbon\Carbon::parse($rsvp->updated_at)->diffForHumans(null, true) }} ago</p>
                                 <a href="{{ route('event', ['event_id' => $rsvp->event_id]) }}">
-                                    <h2> {{ $rsvp->event->title }} </h2>
+                                    <p> {{ $rsvp->event->title }} </p>
                                 </a>
 
                                 <span class="badge bg-primary">{{ $rsvp->status->status }}</span>
@@ -65,17 +65,18 @@
         </div>
     @endif
 
-    @if ($pastEvents !== 0 && $isAuth)
+    @if ($pastEvents->count() > 0 && $isAuth)
+        <hr class="card--max">
         <div class="card--max card__text grid__container">
             <div class="grid__container card--max">
                 <h1 class="card--max">Past events</h1>
             </div>
 
-            <div class="card--max card__text grid__container">
+            <div class="card--max  grid__container">
                 @foreach ($pastEvents as $pastEvent)
-                    <div class="card--s">
+                    <div class="card--max">
                         <a href="{{ route('event', ['event_id' => $pastEvent->id]) }}">
-                            <h2>{{ $pastEvent->title }}</h2>
+                            <p>{{ $pastEvent->title }}</p>
                         </a>
                         <p>{{ \Carbon\Carbon::parse($pastEvent->start)->diffForHumans() }}</p>
                         <p>{{ $pastEvent->location }}</p>

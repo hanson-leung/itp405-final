@@ -22,10 +22,12 @@
             <div class="grid__info">
                 @if (Auth::check())
                     {{-- if logged in, show profile and logout links --}}
-                    <a href="{{ route('index', [
-                        'username' => Auth::user()->username,
-                    ]) }}"
-                        class="nav-link">Party central</a>
+                    <div class="grid__content">
+                        <a href="{{ route('index', [
+                            'username' => Auth::user()->username,
+                        ]) }}"
+                            class="nav-link">Party central</a>
+                    </div>
                     <div class="grid__content">
                         <a href="{{ route('event.create') }}" class="nav-link">Create an event</a>
                         <a href="{{ route('settings') }}" class="nav-link">Account</a>
@@ -37,25 +39,27 @@
             </div>
         </nav>
 
-        @if (session('message'))
-            <div class="grid__container card--m errors card__text">
-                <p class="alert card-full">{{ session('message') }}</p>
-            </div>
-        @endif
-
-        @yield('main')
-
-        @if ($errors->any())
-            <div class="grid__container card--m errors card__text">
-                <div class="card--full">
-                    @foreach ($errors->all() as $error)
-                        <p class="alert">
-                            {{ $error }}
-                        </p>
-                    @endforeach
+        <div class="card--l card--centered card__text grid__container ">
+            @if ($errors->any() || session('message'))
+                <div class="grid__container card--max card__text">
+                    <div class="card--full">
+                        @foreach ($errors->all() as $error)
+                            <p class="alert txt-caution">
+                                {{ $error }}
+                            </p>
+                        @endforeach
+                        @if (session('message'))
+                            <p class="alert txt-ok">
+                                {{ session('message') }}
+                            </p>
+                        @endif
+                    </div>
                 </div>
-            </div>
-        @endif
+            @endif
+
+            @yield('main')
+        </div>
+
     </section>
 </body>
 

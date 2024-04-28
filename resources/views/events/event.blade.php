@@ -4,22 +4,20 @@
 
 @section('main')
     <div class="card--max card__text grid__container">
-        {{-- show edit button if event owner --}}
+        {{--  if event owner, show edit button --}}
         @if ($isEventOwner)
-            <a href="{{ route('event.edit', ['event_id' => $event->id]) }}" class="card--max">Edit event</a>
+            <div class="grid__content">
+                <a href="{{ route('event.edit', ['event_id' => $event->id]) }}" class="card--max">Edit event</a>
+            </div>
         @endif
 
         {{-- event title --}}
         <h1 class="card--max">{{ $event->title }}</h1>
     </div>
 
-    <div class="card--max card__text grid__container">
-        <div class="card--max">
-            {{-- event host --}}
-            <p>Hosted by {{ $isEventOwner ? 'you' : $event->user->name }}</p>
-
-            {{-- event start --}}
-            {{ \Carbon\Carbon::parse($event->start)->format('F j, Y \a\t g:i A') }}
+    <div class="card--max card__text">
+        {{-- event start --}}
+        <p class="card--max">{{ \Carbon\Carbon::parse($event->start)->format('F j, Y \a\t g:i A') }}
 
             {{-- event end --}}
             @if ($event->end)
@@ -29,41 +27,62 @@
                     to {{ \Carbon\Carbon::parse($event->end)->format('F j, Y \a\t g:i A') }}
                 @endif
             @endif
+        </p>
 
-            <p>{{ $event->description }}</p>
+        {{-- event host --}}
+        <p>Hosted by
+            <a href="{{ route('index', ['username' => $event->user->username]) }}">{{ $isEventOwner ? 'you' : $event->user->name }}
+            </a>
+        </p>
 
-            {{-- event location --}}
-            @if ($event->location)
-                <p>{{ $event->location }}</p>
-            @endif
 
-        </div>
-        @if ($attendees)
-            <p>Guest list ({{ $attendees->where('status_id', 1)->count() }} going,
-                {{ $attendees->where('status_id', 3)->count() }} maybe)</p>
-            <div class="card--max grid__container">
-                {{-- show all attendees --}}
-                <a id="guestlist" href="#" class="grid__content">
-                    @foreach ($attendees->take(2) as $attendee)
-                        <p>{{ $attendee->user->name }}</p>
-                    @endforeach
-                    @if ($attendees->count() > 2)
-                        <p>+ {{ $attendees->count() - 2 }} more</p>
-                    @endif
-                </a>
-            </div>
+
+        {{-- event location --}}
+        @if ($event->location)
+            <p>·</p>
+            <p class="card--max">{{ $event->location }}</p>
         @endif
     </div>
 
+    <div class="card--max card__text grid__container">
+        {{-- event description --}}
+        <p class="card--max">{{ $event->description }}</p>
+    </div>
+
+    {{-- attendees --}}
+
+    <div class="card--max grid__container card__text">
+        {{-- show all attendees --}}
+        <div class="grid__content card--max">
+            <p>Guest list:</p> [
+            @if ($attendees->count() === 0)
+                <p>No one yet, spread the word</p>
+            @endif
+
+            @foreach ($attendees->take(2) as $attendee)
+                <p>{{ $attendee->user->name }}</p>
+            @endforeach
+            @if ($attendees->count() > 2)
+                <a id="guestlist" href="#">
+                    <p>+ {{ $attendees->count() - 2 }} more</p>
+                </a>
+            @endif
+            ]
+        </div>
+    </div>
+
+
+    <div class="grid__space">
+    </div>
 
     <div class="card--max card__text grid__container">
         {{-- if owner: edit event, else rsvp --}}
         @if (!$isEventOwner)
-            <form method="post" action="{{ route('rsvp.post') }}" class="grid__container card--m">
+            <form method="post" action="{{ route('rsvp.post') }}" class="grid__container card--max">
                 @csrf
                 <div class="grid__content grid__content--fixed card--m">
                     <div class="card--min">
-                        <label class="form-label" for="status_id">Will you be there?</label>
+                        <label class="form-label" for="status_id">Going?</label>
                     </div>
                     <select id="status_id" name="status_id" class="form-control">
                         @foreach ($rsvpOptions as $rsvpOption)
@@ -71,84 +90,91 @@
                                 {{ $rsvpOption->status }}</option>
                         @endforeach
                     </select>
+
+                    <input type="hidden" name="event_id" value="{{ $event->id }}">
+                    <input type="submit" value="Let's rally!" class="btn btn-primary">
                 </div>
-                <input type="hidden" name="event_id" value="{{ $event->id }}">
-                <input type="submit" value="Submit" class="btn btn-primary">
             </form>
         @endif
+
 
 
         {{-- comment form --}}
         @if (Auth::check())
             @if ($userRsvp || Auth::user()->id === $event->user_id)
-                <form method="post" action="{{ route('comment.post') }}" class="grid__container card--m">
+                <form method="post" action="{{ route('comment.post') }}" class="grid__container card--max">
                     @csrf
-                    <div class="grid__content grid__content--fixed card--m">
-                        <label class="card--min" for="comment">Comment</label>
-                        <textarea id="comment" name="comment" class="card--max">{{ old('comment') }}</textarea>
-                    </div>
+                    <label class="card--min" for="comment">Leave a comment</label>
+                    <textarea id="comment" name="comment" class="card--max">{{ old('comment') }}</textarea>
                     <input type="hidden" name="event_id" value="{{ $event->id }}">
-                    <input type="submit" value="Submit" class="btn btn-primary">
+                    <input type="submit" value="Send" class="btn btn-primary">
                 </form>
             @else
-                <p>You must RSVP to leave a comment.</p>
+                <p class="card--max">RSVP to leave a comment!</p>
             @endif
         @else
-            <p><a href="{{ route('login') }}">Login</a> to leave a comment.</p>
+            <p><a href="{{ route('login') }}">Login</a> to leave a comment!</p>
         @endif
+
+        {{-- comments --}}
+        @if ($comments)
+            {{-- show all comments --}}
+            @foreach ($comments as $comment)
+                <hr class="card--max">
+                <div class="card--max grid__container">
+                    <p>{{ $isEventOwner ? 'You' : $event->user->name }}
+                        @if (\Carbon\Carbon::parse($comment->created_at)->diffInHours() < 12)
+                            ({{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }})
+                        @else
+                            ({{ \Carbon\Carbon::parse($comment->created_at)->format('F j, Y \a\t g:i A') }})
+                        @endif
+                        @if (Auth::user() && $comment->user->id === Auth::user()->id)
+                            {{-- edit comment --}}
+                            – <a href="{{ route('comment.edit', ['comment_id' => $comment->id]) }}">Edit</a>
+                        @endif
+                    </p>
+                    <p>{{ $comment->comment }}</p>
+                </div>
+            @endforeach
     </div>
-
-    {{-- comments --}}
-    @if ($comments)
-        <div class="card--max card__text grid__container">
-
-            <ul class="grid__container card--max">
-                {{-- show all comments --}}
-                @foreach ($comments as $comment)
-                    <div class="card--max">
-                        <p>{{ $isEventOwner ? 'You' : $event->user->name }}
-                            @if (\Carbon\Carbon::parse($comment->created_at)->diffInHours() < 12)
-                                ({{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }})
-                            @else
-                                ({{ \Carbon\Carbon::parse($comment->created_at)->format('F j, Y \a\t g:i A') }})
-                            @endif
-                            @if (Auth::user() && $comment->user->id === Auth::user()->id)
-                                {{-- edit comment --}}
-                                <a href="{{ route('comment.edit', ['comment_id' => $comment->id]) }}">Edit</a>
-                            @endif
-                        </p>
-                        <p>{{ $comment->comment }}</p>
-                    </div>
-                @endforeach
-            </ul>
-        </div>
     @endif
 
 
     {{-- guests --}}
     @if ($attendees)
         <div class="modal">
-            <div class="modal-content">
-                <span class="modal-close">&times;</span>
+            <div class="modal-content grid__container">
+                <div class="modal-background"></div>
+                <a href="#" class="modal-close card__text grid__container">Close</a>
                 <div class="card--max card__text grid__container">
-                    <p>Going</p>
+                    <h2>Going ({{ $attendees->where('status_id', 1)->count() }})</h2>
+
                     @foreach ($attendees->where('status_id', 1) as $attendee)
-                        <p>{{ $attendee->user->name }}</p>
+                        <a
+                            href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
                     @endforeach
                 </div>
 
-                <div class="card--max card__text grid__container">
-                    <p>Maybe</p>
-                    @foreach ($attendees->where('status_id', 3) as $attendee)
-                        <p>{{ $attendee->user->name }}</p>
-                    @endforeach
-                </div>
-
-                @if ($isEventOwner)
+                @if ($attendees->where('status_id', 3)->count() > 0)
+                    <hr class="card--max">
                     <div class="card--max card__text grid__container">
-                        <p>Not going</p>
+                        <h2>Maybe ({{ $attendees->where('status_id', 3)->count() }})</h2>
+                        @foreach ($attendees->where('status_id', 3) as $attendee)
+                            <a
+                                href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
+                        @endforeach
+                    </div>
+
+                @endif
+
+
+                @if ($isEventOwner && $attendees->where('status_id', 2)->count() > 0)
+                    <hr class="card--max">
+                    <div class="card--max card__text grid__container">
+                        <p>Not going ({{ $attendees->where('status_id', 2)->count() }})</p>
                         @foreach ($attendees->where('status_id', 2) as $attendee)
-                            <p>{{ $attendee->user->name }}</p>
+                            <a
+                                href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
                         @endforeach
                     </div>
                 @endif
@@ -160,8 +186,8 @@
         $('#guestlist').on('click', function() {
             $('.modal').show()
         })
-        $('.modal-close').on('click', function() {
-            $('.modal').hide()
-        })
+        $('.modal-close, .modal-background').on('click', function() {
+            $('.modal').hide();
+        });
     </script>
 @endsection
