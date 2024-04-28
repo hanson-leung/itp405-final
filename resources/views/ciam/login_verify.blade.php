@@ -3,12 +3,13 @@
 @section('title', 'Login')
 
 @section('main')
-
+    {{-- header --}}
     <div class="card--max card__text grid__container">
         <h1 class="card--max">Login</h1>
         <p class="card--max">Get ready to party!</p>
     </div>
 
+    {{-- login form --}}
     <div class="card--max card__text grid__container">
         <a class="card--max" href="{{ route('login') }}">Not {{ $username->name }}?</a>
         <form method="post" action="{{ route('login.verify.post') }}" class="grid__container card--m">

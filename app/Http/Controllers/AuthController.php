@@ -9,7 +9,7 @@ use Illuminate\Contracts\Session\Session;
 
 class AuthController extends Controller
 {
-    // logout
+    // process logout
     public function logoutRequest()
     {
         Auth::logout();
@@ -18,17 +18,20 @@ class AuthController extends Controller
     }
 
 
-    // login
+    // login page
     public function login()
     {
+        // if user is already logged in, redirect to index
         if (Auth::check()) {
             return redirect()->route('index', ['username' => Auth::user()->username]);
         }
 
+        // if phone is in session, remove it
         if (session()->has('phone')) {
             session()->forget('phone');
         }
 
+        // return view
         return view(
             'ciam.login',
         );
@@ -38,7 +41,7 @@ class AuthController extends Controller
     // login request
     public function loginRequest(Request $request)
     {
-        // validate phone
+        // validate
         $request->validate([
             'phone' => 'required|numeric|digits:10',
         ]);
@@ -49,28 +52,34 @@ class AuthController extends Controller
         // check if user exists
         $isReturningUser = User::where('phone', $request->input('phone'))->exists();
         if ($isReturningUser) {
-            // if exists, redirect to login verify
+            // if exists, redirect to login verify – step 2
             return redirect()->route('login.verify');
         } else {
-            // if not exists, redirect to register
+            // if user does not exists, redirect to register
             return redirect()->route('register');
         }
     }
 
-    // login verify
+    // login verify page
     public function loginVerify()
     {
+        // check if user phone number exists in database
         $isReturningUser = User::where('phone', session()->get('phone'))->exists();
 
         if (Auth::check()) {
+            // if user is already logged in, redirect to index
             return redirect()->route('index', ['username' => Auth::user()->username]);
         } else if (!$isReturningUser) {
+            // if user does not exists, redirect to register
             return redirect()->route('register');
         }
 
+        // if phone is not in session, redirect to login – step 1
         if (!session()->has('phone')) {
             return redirect()->route('login');
         }
+
+        // return view
         return view(
             'ciam.login_verify',
             [
@@ -88,20 +97,25 @@ class AuthController extends Controller
             'password' => 'required|string|max:255',
         ]);
 
+        // attempt login
         $wasLoginSuccessful = Auth::attempt([
             'phone' => session()->get('phone'),
             'password' => $request->input('password'),
         ]);
 
         if ($wasLoginSuccessful) {
+            // if login successful, redirect to login redirect
             return redirect()->route('login.redirect');
         } else {
+            // if login unsuccessful, redirect to login verify
             return redirect()->route('login.verify')->with('message', 'Invalid password');
         }
     }
 
+    // login redirect
     public function loginRedirect()
     {
+        // if intent is in session, redirect to the intent
         if (session()->has('intent')) {
             $intent = session()->get('intent');
             if ($intent == 'rsvp') {
@@ -110,6 +124,8 @@ class AuthController extends Controller
                 return redirect()->route('event.create.handle');
             }
         }
+
+        // if user has no intent in session, redirect to index
         return redirect()->route('index', ['username' => Auth::user()->username]);
     }
 }

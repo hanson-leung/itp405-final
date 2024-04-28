@@ -3,11 +3,13 @@
 @section('title', 'Login')
 
 @section('main')
+    {{-- header --}}
     <div class="card--max card__text grid__container">
         <h1 class="card--max">Login</h1>
         <p class="card--max">Get ready to party!</p>
     </div>
 
+    {{-- login form --}}
     <div class="card--max card__text grid__container">
         <form method="post" action="{{ route('login.post') }}" class="grid__container card--m">
             @csrf

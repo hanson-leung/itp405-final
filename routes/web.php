@@ -30,7 +30,6 @@ Route::get('/login/redirect', [AuthController::class, 'loginRedirect'])->name('l
 Route::post('/rsvp', [RsvpController::class, 'rsvpRequest'])->name('rsvp.post');
 Route::get('/rsvp/handle', [RsvpController::class, 'handleRsvp'])->name('rsvp.handle');
 
-
 // event
 Route::get('/!{event_id}', [EventController::class, 'event'])->name('event');
 

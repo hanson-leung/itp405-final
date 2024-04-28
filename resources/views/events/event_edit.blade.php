@@ -3,10 +3,12 @@
 @section('title', 'Edit event')
 
 @section('main')
+
     <div class="card--max card__text grid__container">
         <h1 class="card--max">Edit event</h1>
     </div>
 
+    {{-- edit event form --}}
     <div class="card--max card__text grid__container">
         <form method="post" action="{{ route('event.edit.post', ['event_id' => $event->id]) }}"
             class="grid__container card--max">
@@ -49,7 +51,7 @@
         </form>
     </div>
 
-    {{-- delete event --}}
+    {{-- delete event form --}}
     <div class="card--max card__text grid__container">
         <form method="post" action="{{ route('event.delete.post') }}" class="grid__container card--max">
             @csrf

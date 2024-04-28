@@ -12,14 +12,18 @@ use Auth;
 
 class EventController extends Controller
 {
-    // events
+    // events page (index)
     public function events($username)
     {
+        // check if user exists
         if (!User::where('username', $username)->exists()) {
             abort(404, 'User not found.');
         }
 
+        // get user id
         $user_id = User::where('username', $username)->first()->id;
+
+        // return view
         return view(
             'events.events',
             [
@@ -32,9 +36,11 @@ class EventController extends Controller
         );
     }
 
-    // event
+
+    // event page
     public function event($event_id)
     {
+        // check if event exists
         if (!Event::where('id', $event_id)->exists()) {
             abort(
                 404,
@@ -42,6 +48,7 @@ class EventController extends Controller
             );
         }
 
+        // return view
         return view('events.event', [
             'isEventOwner' => Auth::check() && Auth::user()->id === Event::find($event_id)->user_id,
             'event' => Event::find($event_id),
@@ -53,15 +60,16 @@ class EventController extends Controller
     }
 
 
-
-    // create event
+    // create event page
     public function create()
     {
+        // return view
         return view(
             'events.event_create'
         );
     }
 
+    // create event request
     public function createRequest(Request $request)
     {
         // validate request
@@ -73,59 +81,77 @@ class EventController extends Controller
             'location' => 'string|max:255|nullable',
         ]);
 
+        // check if user is logged in
         if (!Auth::check()) {
-            // Store the post request in the session
+            // store form inputs in session
             $request->session()->put('request', $request->all());
             $request->session()->put('intent', 'create');
+
+            // redirect to login
             return redirect()->route('login');
         } else {
-            $event = new Event();
-            $event->title = $request->input('title');
-            $event->description = $request->input('description');
-            $event->start = $request->input('start');
-            $event->end = $request->input('end');
-            $event->location = $request->input('location');
-            $event->user_id = Auth::id();
-            $event->save();
+            // create new event
+            try {
+                $event = new Event();
+                $event->title = $request->input('title');
+                $event->description = $request->input('description');
+                $event->start = $request->input('start');
+                $event->end = $request->input('end');
+                $event->location = $request->input('location');
+                $event->user_id = Auth::id();
+                $event->save();
 
-            return redirect()->route('event', ['event_id' => $event->id])->with('message', 'Event created');;
+                // redirect to event
+                return redirect()->route('event', ['event_id' => $event->id])->with('message', 'Event created');
+            } catch (\Exception $e) {
+                return redirect()->route('event.create')->with('message', 'Error creating event');
+            }
         }
     }
 
-    // process create via get for redirect after login
+
+    // handle create request (after login)
     public function handleCreateRequest(Request $request)
     {
-        $data = $request->session()->get('request');
-        $request->session()->forget('request');
+        // create new event
+        try {
+            // get event details from session
+            $data = $request->session()->get('request');
 
-        // Simulate the request as if it's coming from a form submission
-        $fakeRequest = new \Illuminate\Http\Request();
-        $fakeRequest->replace($data);
+            // simulate post request
+            $fakeRequest = new \Illuminate\Http\Request();
+            $fakeRequest->replace($data);
 
-        // Create new event
-        $event = new Event();
-        $event->title = $fakeRequest->input('title');
-        $event->description = $fakeRequest->input('description');
-        $event->start = $fakeRequest->input('start');
-        $event->end = $fakeRequest->input('end');
-        $event->location = $fakeRequest->input('location');
-        $event->user_id = Auth::id();  // Ensure the user is logged in
-        $event->save();
+            $event = new Event();
+            $event->title = $fakeRequest->input('title');
+            $event->description = $fakeRequest->input('description');
+            $event->start = $fakeRequest->input('start');
+            $event->end = $fakeRequest->input('end');
+            $event->location = $fakeRequest->input('location');
+            $event->user_id = Auth::id();
+            $event->save();
 
-        $request->session()->forget(['request', 'intent']);
+            // reset session request and intent
+            $request->session()->forget(['request', 'intent']);
 
-        return redirect()->route('event', ['event_id'
-        => $event->id])->with('message', 'Event created');
+            // redirect to event
+            return redirect()->route('event', ['event_id'
+            => $event->id])->with('message', 'Event created');
+        } catch (\Exception $e) {
+            return redirect()->route('event.create')->with('message', 'Error creating event');
+        }
     }
 
 
-    // edit event
+    // edit event page
     public function edit($event_id)
     {
+        // check if user is authorized
         if (Auth::user()->cannot('edit', Event::find($event_id))) {
             abort(403, 'Unauthorized action.');
         }
 
+        // return view
         return view(
             'events.event_edit',
             [
@@ -134,13 +160,16 @@ class EventController extends Controller
         );
     }
 
+
+    // edit event request
     public function editRequest(Request $request, $event_id)
     {
+        // check if user is authorized
         if (Auth::user()->cannot('edit', Event::find($event_id))) {
             abort(403, 'Unauthorized action.');
         }
 
-        // validate request
+        // validate
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'string|nullable',
@@ -149,30 +178,46 @@ class EventController extends Controller
             'location' => 'string|max:255|nullable',
         ]);
 
-        $event = Event::find($event_id);
-        $event->title = $request->input('title');
-        $event->description = $request->input('description');
-        $event->start = $request->input('start');
-        $event->end = $request->input('end');
-        $event->location = $request->input('location');
-        $event->save();
+        // update event
+        try {
+            $event = Event::find($event_id);
+            $event->title = $request->input('title');
+            $event->description = $request->input('description');
+            $event->start = $request->input('start');
+            $event->end = $request->input('end');
+            $event->location = $request->input('location');
+            $event->save();
 
-        return redirect()->route('event', [Event::find($event_id)])->with('message', 'Event updated');;
+            // redirect to event
+            return redirect()->route('event', [Event::find($event_id)])->with('message', 'Event updated');
+        } catch (\Exception $e) {
+            return redirect()->route('event.edit', ['event_id' => $event_id])->with('message', 'Error updating event');
+        }
     }
+
 
     // delete event
     public function delete(Request $request)
     {
+        // get event id and name
         $event_id = $request->input('event_id');
         $event_name = Event::find($event_id)->title;
 
+        // check if user is authorized
         if (Auth::user()->cannot('delete', Event::find($event_id))) {
             abort(403, 'Unauthorized action.');
         }
 
-        Rsvp::where('event_id',  $event_id)->delete();
-        Comment::where('event_id',  $event_id)->delete();
-        Event::destroy($event_id);
-        return redirect()->route('index', ['username' => Auth::user()->username])->with('message', $event_name . ' deleted');
+        // delete event
+        try {
+            Rsvp::where('event_id', $event_id)->delete();
+            Comment::where('event_id', $event_id)->delete();
+            Event::destroy($event_id);
+
+            // redirect to index
+            return redirect()->route('index', ['username' => Auth::user()->username])->with('message', $event_name . ' deleted!');
+        } catch (\Exception $e) {
+            return redirect()->route('event', ['event_id' => $event_id])->with('message', 'Error deleting event');
+        }
     }
 }

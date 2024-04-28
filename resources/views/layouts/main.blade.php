@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,12 +15,13 @@
     <link rel="icon" href="https://hansonleung.co/favicon.png" type="image/png">
 </head>
 
-<body style="opacity: 1 !important">
+<body>
     <section class="grid space--l">
+        {{-- navbar --}}
         <nav class="card--max">
             <div class="grid__info">
+                {{-- if auth: show links --}}
                 @if (Auth::check())
-                    {{-- if logged in, show profile and logout links --}}
                     <div class="grid__content">
                         <a href="{{ route('index', [
                             'username' => Auth::user()->username,
@@ -33,13 +33,15 @@
                         <a href="{{ route('settings') }}" class="nav-link">Account</a>
                     </div>
                 @else
+                    {{-- if not auth: show links --}}
                     <a href="{{ route('event.create') }}" class="nav-link">Create an event</a>
                     <a href="/login" class="nav-link">Login</a>
                 @endif
             </div>
         </nav>
 
-        <div class="card--l card--centered card__text grid__container ">
+        {{-- error handling --}}
+        <div class="card--l card--centered card__text grid__container">
             @if ($errors->any() || session('message'))
                 <div class="grid__container card--max card__text">
                     <div class="card--full">
@@ -57,10 +59,15 @@
                 </div>
             @endif
 
+            {{-- main content --}}
             @yield('main')
         </div>
-
     </section>
+
+    {{-- js --}}
+    <script>
+        $("body").addClass("fade-in");
+    </script>
 </body>
 
 </html>

@@ -3,10 +3,12 @@
 @section('title', 'Create')
 
 @section('main')
+    {{-- header --}}
     <div class="card--max card__text grid__container">
         <h1 class="card--max">Create</h1>
     </div>
 
+    {{-- create event form --}}
     <div class="card--max card__text grid__container">
         <form method="post" action="{{ route('event.create.post') }}" class="grid__container card--m">
             @csrf
