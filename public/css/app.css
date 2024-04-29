@@ -63,10 +63,11 @@
 
 input,
 textarea,
-select {
+select,
+.badge {
     border: 1px solid var(--color-black-20);
     border-radius: 0.25rem;
-    padding: 0.5rem;
+    padding: calc(var(--space-8) / 2);
     margin: 0.5rem 0;
     width: 100%;
     min-width: 300px;
@@ -74,6 +75,14 @@ select {
 
 textarea {
     resize: vertical;
+}
+
+.badge {
+    width: fit-content;
+    min-width: auto;
+    height: fit-content;
+    margin: auto;
+    text-decoration: none !important;
 }
 
 input:disabled,
@@ -107,6 +116,7 @@ button:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover {
     opacity: 0.8;
+    background-color: var(--color-black-2);
 }
 
 .grid__content--fixed {

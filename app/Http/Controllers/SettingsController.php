@@ -25,7 +25,17 @@ class SettingsController extends Controller
         // validate request
         request()->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . Auth::id(),
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:users,username,' . Auth::id(),
+                function ($attribute, $value, $fail) {
+                    if (strpos($value, ' ') !== false) {
+                        $fail('The username cannot contain spaces');
+                    }
+                }
+            ]
         ]);
 
         try {

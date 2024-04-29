@@ -24,28 +24,35 @@ class EventController extends Controller
         $user_id = User::where('username', $username)->first()->id;
 
         // return view
-        return view(
-            'events.events',
-            [
-                'username' => User::where('id', $user_id)->first()->name,
-                'isAuth' => Auth::check() && Auth::user()->id === $user_id,
-                'events' => Event::with(['user'])->where('user_id', $user_id)->where('start', '>', now())->orderBy('start', 'asc')->get(),
-                'pastEvents' => Event::with(['user'])->where('user_id', $user_id)->where('start', '<', now())->orderBy('start', 'desc')->get(),
-                'rsvps' => Rsvp::with(['user'])->whereIn('status_id', [1, 3])->where('user_id', $user_id)->get()->sortByDesc('start'),
-            ]
-        );
+        return view('events.events', [
+            'username' => User::where('id', $user_id)->first()->name,
+            'isAuth' => Auth::check() && Auth::user()->id === $user_id,
+            'events' => Event::with(['user', 'rsvps'])
+                ->where('user_id', $user_id)
+                ->where('start', '>', now())
+                ->orderBy('start', 'asc')
+                ->get(),
+            'pastEvents' => Event::with(['user'])
+                ->where('user_id', $user_id)
+                ->where('start', '<', now())
+                ->orderBy('start', 'desc')
+                ->get(),
+            'rsvps' => Rsvp::with(['user'])
+                ->whereIn('status_id', [1, 3])
+                ->where('user_id', $user_id)
+                ->get()
+                ->sortByDesc('start'),
+        ]);
     }
-
 
     // event page
     public function event($event_id)
     {
         // check if event exists
-        if (!Event::where('id', $event_id)->exists()) {
-            abort(
-                404,
-                'Event not found.'
-            );
+        try {
+            $event = Event::findOrFail($event_id);
+        } catch (\Exception $e) {
+            abort(404, 'Event not found.');
         }
 
         // return view
@@ -54,19 +61,19 @@ class EventController extends Controller
             'event' => Event::find($event_id),
             'rsvpOptions' => Status::all(),
             'userRsvp' => Rsvp::where('event_id', $event_id)->where('user_id', Auth::id())->first(),
-            'attendees' => Rsvp::with('user')->where('event_id', $event_id)->whereNotIn('status_id', [2])->get(),
+            'attendees' => Rsvp::with('user')
+                ->where('event_id', $event_id)
+                ->whereNotIn('status_id', [2])
+                ->get(),
             'comments' => Comment::with('user')->where('event_id', $event_id)->orderBy('created_at', 'desc')->get(),
         ]);
     }
-
 
     // create event page
     public function create()
     {
         // return view
-        return view(
-            'events.event_create'
-        );
+        return view('events.event_create');
     }
 
     // create event request
@@ -102,13 +109,14 @@ class EventController extends Controller
                 $event->save();
 
                 // redirect to event
-                return redirect()->route('event', ['event_id' => $event->id])->with('message', 'Event created');
+                return redirect()
+                    ->route('event', ['event_id' => $event->id])
+                    ->with('message', 'Event created');
             } catch (\Exception $e) {
                 return redirect()->route('event.create')->with('message', 'Error creating event');
             }
         }
     }
-
 
     // handle create request (after login)
     public function handleCreateRequest(Request $request)
@@ -135,13 +143,13 @@ class EventController extends Controller
             $request->session()->forget(['request', 'intent']);
 
             // redirect to event
-            return redirect()->route('event', ['event_id'
-            => $event->id])->with('message', 'Event created');
+            return redirect()
+                ->route('event', ['event_id' => $event->id])
+                ->with('message', 'Event created');
         } catch (\Exception $e) {
             return redirect()->route('event.create')->with('message', 'Error creating event');
         }
     }
-
 
     // edit event page
     public function edit($event_id)
@@ -152,14 +160,10 @@ class EventController extends Controller
         }
 
         // return view
-        return view(
-            'events.event_edit',
-            [
-                'event' => Event::find($event_id),
-            ]
-        );
+        return view('events.event_edit', [
+            'event' => Event::find($event_id),
+        ]);
     }
-
 
     // edit event request
     public function editRequest(Request $request, $event_id)
@@ -189,12 +193,15 @@ class EventController extends Controller
             $event->save();
 
             // redirect to event
-            return redirect()->route('event', [Event::find($event_id)])->with('message', 'Event updated');
+            return redirect()
+                ->route('event', [Event::find($event_id)])
+                ->with('message', 'Event updated');
         } catch (\Exception $e) {
-            return redirect()->route('event.edit', ['event_id' => $event_id])->with('message', 'Error updating event');
+            return redirect()
+                ->route('event.edit', ['event_id' => $event_id])
+                ->with('message', 'Error updating event');
         }
     }
-
 
     // delete event
     public function delete(Request $request)
@@ -215,9 +222,13 @@ class EventController extends Controller
             Event::destroy($event_id);
 
             // redirect to index
-            return redirect()->route('index', ['username' => Auth::user()->username])->with('message', $event_name . ' deleted!');
+            return redirect()
+                ->route('index', ['username' => Auth::user()->username])
+                ->with('message', $event_name . ' deleted!');
         } catch (\Exception $e) {
-            return redirect()->route('event', ['event_id' => $event_id])->with('message', 'Error deleting event');
+            return redirect()
+                ->route('event', ['event_id' => $event_id])
+                ->with('message', 'Error deleting event');
         }
     }
 }

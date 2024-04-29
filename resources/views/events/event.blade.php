@@ -110,73 +110,78 @@
         @if ($comments)
             @foreach ($comments as $comment)
                 <div class="card--max">
-                    <p><a href="{{ route('index', ['username' => $event->user->username]) }}">
-                            {{ $isEventOwner ? 'You' : $event->user->name }}</a>
+                    <p>
+                        @if (Auth::user() && Auth::user()->id == $comment->user->id)
+                            <a href="{{ route('index', ['username' => $comment->user->username]) }}">You</a>
+                        @else
+                            <a
+                                href="{{ route('index', ['username' => $comment->user->username]) }}">{{ $comment->user->name }}</a>
+                        @endif
                         @if (\Carbon\Carbon::parse($comment->created_at)->diffInHours() < 12)
                             ({{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }})
                         @else
                             ({{ \Carbon\Carbon::parse($comment->created_at)->format('F j, Y \a\t g:i A') }})
                         @endif
                         @if (Auth::user() && $comment->user->id === Auth::user()->id)
-                            – <a href="{{ route('comment.edit', ['comment_id' => $comment->id]) }}">Edit</a>
+                            –
+                            <a href="{{ route('comment.edit', ['comment_id' => $comment->id]) }}">Edit</a>
                         @endif
                     </p>
                     <p>{{ $comment->comment }}</p>
                 </div>
             @endforeach
-    </div>
-    @endif
+        @endif
 
-    {{-- guest modal --}}
-    @if ($attendees)
-        <div class="modal grid">
-            <div class="modal-content card--l card--centered card__text grid__container">
-                <a href="#" class="modal-close grid__container">Close</a>
+        {{-- guest modal --}}
+        @if ($attendees)
+            <div class="modal grid">
+                <div class="modal-content card--l card--centered card__text grid__container">
+                    <a href="#" class="modal-close grid__container">Close</a>
 
-                {{-- going --}}
-                <div class="card--max grid__container">
-                    <h2>Going ({{ $attendees->where('status_id', 1)->count() }})</h2>
-                    @foreach ($attendees->where('status_id', 1) as $attendee)
-                        <a
-                            href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
-                    @endforeach
+                    {{-- going --}}
+                    <div class="card--max grid__container">
+                        <h2>Going ({{ $attendees->where('status_id', 1)->count() }})</h2>
+                        @foreach ($attendees->where('status_id', 1) as $attendee)
+                            <a
+                                href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
+                        @endforeach
+                    </div>
+
+                    {{-- maybe --}}
+                    @if ($attendees->where('status_id', 3)->count() > 0)
+                        <div class="card--max grid__container">
+                            <h2>Maybe ({{ $attendees->where('status_id', 3)->count() }})</h2>
+                            @foreach ($attendees->where('status_id', 3) as $attendee)
+                                <a
+                                    href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    {{-- not going --}}
+                    @if ($isEventOwner && $attendees->where('status_id', 2)->count() > 0)
+                        <div class="card--max grid__container">
+                            <p>Not going ({{ $attendees->where('status_id', 2)->count() }})</p>
+                            @foreach ($attendees->where('status_id', 2) as $attendee)
+                                <a
+                                    href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
-
-                {{-- maybe --}}
-                @if ($attendees->where('status_id', 3)->count() > 0)
-                    <div class="card--max grid__container">
-                        <h2>Maybe ({{ $attendees->where('status_id', 3)->count() }})</h2>
-                        @foreach ($attendees->where('status_id', 3) as $attendee)
-                            <a
-                                href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
-                        @endforeach
-                    </div>
-                @endif
-
-                {{-- not going --}}
-                @if ($isEventOwner && $attendees->where('status_id', 2)->count() > 0)
-                    <div class="card--max grid__container">
-                        <p>Not going ({{ $attendees->where('status_id', 2)->count() }})</p>
-                        @foreach ($attendees->where('status_id', 2) as $attendee)
-                            <a
-                                href="{{ route('index', ['username' => $attendee->user->username]) }}">{{ $attendee->user->name }}</a>
-                        @endforeach
-                    </div>
-                @endif
             </div>
-        </div>
-        <div class="modal-background"></div>
-    @endif
+            <div class="modal-background"></div>
+        @endif
 
-    {{-- modal js --}}
-    <script>
-        $('#guestlist').on('click', function() {
-            $('.modal').addClass('active');
-            $('.modal-background').addClass('active');
-        })
-        $('.modal-close, .modal-background').on('click', function() {
-            $('.modal').removeClass('active');
-            $('.modal-background').removeClass('active');
-        });
-    </script>
-@endsection
+        {{-- modal js --}}
+        <script>
+            $('#guestlist').on('click', function() {
+                $('.modal').addClass('active');
+                $('.modal-background').addClass('active');
+            })
+            $('.modal-close, .modal-background').on('click', function() {
+                $('.modal').removeClass('active');
+                $('.modal-background').removeClass('active');
+            });
+        </script>
+    @endsection

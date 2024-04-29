@@ -28,11 +28,16 @@
                 </div>
             @else
                 @foreach ($events as $event)
-                    <div class="card--max">
-                        <a href="{{ route('event', ['event_id' => $event->id]) }}">
-                            <p>{{ $event->title }}</p>
+                    <div class="card--max grid__content">
+                        <a class="badge"
+                            href={{ route('event', ['event_id' => $event->id]) }}>{{ \Carbon\Carbon::parse($event->start)->diffForHumans(null, true, false, 1) }}
                         </a>
-                        <p>{{ \Carbon\Carbon::parse($event->start)->diffForHumans() }}</p>
+                        <div>
+                            <a href="{{ route('event', ['event_id' => $event->id]) }}">
+                                <p>{{ $event->title }}</p>
+                            </a>
+                            <p>{{ $event->rsvps->where('status_id', 3 || 1)->count() }} guests</p>
+                        </div>
                     </div>
                 @endforeach
             @endif
@@ -56,12 +61,21 @@
                     @else
                         @foreach ($rsvps as $rsvp)
                             <div class="card--max">
-                                <p>RSVP'd {{ \Carbon\Carbon::parse($rsvp->updated_at)->diffForHumans(null, true) }} ago</p>
-                                <a href="{{ route('event', ['event_id' => $rsvp->event_id]) }}">
-                                    <p> {{ $rsvp->event->title }} </p>
-                                </a>
-                                <span class="badge bg-primary">{{ $rsvp->status->status }}</span>
-                                <p>In {{ \Carbon\Carbon::parse($rsvp->event->start)->diffForHumans(null, true) }}</p>
+                                <div class="grid__content">
+                                    <a href="{{ route('event', ['event_id' => $rsvp->event_id]) }}"
+                                        class="badge">{{ \Carbon\Carbon::parse($rsvp->event->start)->diffForHumans(null, true) }}
+                                    </a>
+                                    <div>
+                                        <a href="{{ route('event', ['event_id' => $rsvp->event_id]) }}">
+                                            <p> {{ $rsvp->event->title }} </p>
+                                        </a>
+                                        <div class="grid__content">
+                                            <p>{{ $rsvp->status->status }} – Replied
+                                                {{ \Carbon\Carbon::parse($rsvp->updated_at)->diffForHumans(null, true) }}
+                                                ago</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         @endforeach
                     @endif
